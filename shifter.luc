@@ -6,6 +6,7 @@ module shifter (
   ) {
 
   always {
+    shift = 16b0;
     case (alufn[1:0]) {
       b00:
         // shift left
@@ -17,8 +18,6 @@ module shifter (
         // shift right extension
         shift = $signed(a) >>> b[3:0];
         
-      default:
-        shift = 16b0;
     }
   }
 }

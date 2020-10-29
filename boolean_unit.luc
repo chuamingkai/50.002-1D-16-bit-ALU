@@ -6,6 +6,7 @@ module boolean_unit (
   ) {
 
   always {
+    boolean = 16b0;
     case (alufn[3:0]) {
       b1000:
         // and
@@ -23,8 +24,6 @@ module boolean_unit (
         // select a
         boolean = a;
         
-      default:
-        boolean = 16b0;
 
     }
       
