@@ -11,27 +11,27 @@ module 16_bit_adder (
     output n
   ) {
   
- sig interim[16];
+ sig add_interim[16];
   
   
 always {
     // ALUFN[0] == ADD
     if(alufn[0] == 0){
-      interim = x + y;
+      add_interim = x + y;
     }else{
-      interim = x - y;
+      add_interim = x - y;
     }
     
-    sum = interim[15:0];
+    sum = add_interim[15:0];
     
     
-    if(interim == 0){
+    if(add_interim == 0){
        z = 1;
     }else{
     z = 0;
     }
-    v = (((x[15])&(y[15])&(~interim[15])) | ((~x[15])&(~y[15])&(interim[15])));
-    n = interim[15];
+    v = (((x[15])&(y[15])&(~add_interim[15])) | ((~x[15])&(~y[15])&(add_interim[15])));
+    n = add_interim[15];
     
        
   }
