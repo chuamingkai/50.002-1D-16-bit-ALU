@@ -1,8 +1,8 @@
 module sixteen_bit_adder (
     //inputs 
-    input alufn[6],
-    input a[16],
-    input b[16],
+    input alufn[6], // 6 bit alufn signal
+    input a[16], // 16 bit a input
+    input b[16], // 16 bit b input
     
     //outputs
     output sum[16],
@@ -15,15 +15,14 @@ module sixteen_bit_adder (
   
   
 always {
+    sum = 16b0;
     // ALUFN[0] == ADD
     if(alufn[0] == 0){
       add_interim = a + b;
     }else{
       add_interim = a - b;
     }
-    
-    sum = add_interim[15:0];
-    
+       
     
     if(add_interim == 0){
        z = 1;
@@ -32,6 +31,23 @@ always {
     }
     v = (((a[15])&(b[15])&(~add_interim[15])) | ((~a[15])&(~b[15])&(add_interim[15])));
     n = add_interim[15];
+    
+    case (alufn[1:0]) {
+      b00:
+        // add
+        sum = add_interim;
+      b01:
+        // substract
+        sum = add_interim;
+      
+      b10:
+        // multiply
+        sum = a * b;
+        
+      b11:
+        // divide
+        sum = a / b;
+    }
     
        
   }
