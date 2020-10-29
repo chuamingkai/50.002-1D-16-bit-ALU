@@ -1,0 +1,10 @@
+module multiplier_unit (
+    input a[16], // 16-bit a input
+    input b[16], // 16-bit b input
+    output p[16] 
+  ) {
+
+  always {
+    p = a * b;
+  }
+}
