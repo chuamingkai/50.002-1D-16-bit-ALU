@@ -1,5 +1,5 @@
 module sixteen_bit_alu (
-    input a[16], //16-bit a input
+    input a[16], // 16-bit a input
     input b[16], // 16-bit b input
     input alufn[6], // 6 bit alufn signal
     output alu[16]
