@@ -1,0 +1,46 @@
+module alutester (
+    input clk,  // clock 
+    input rst,  // reset
+    input start,
+    //output io_seg[8],
+    //output io_sel[4],
+    //output opcode_led[6]
+  ) 
+  {//SIGNAL_AND_MODULE_INSTANCES
+  clk(clk) {
+    .rst(rst) {
+      
+       
+      fsm state = {START, ADDOVER, SUBOVER, ADD, ....FAIL, PASSALL} //edit in the states 
+      sixteen_bit_alu sixteenbitalu
+      
+      
+      }}}
+      
+      always { //ALWAYS_STATEMENTS
+      sixteenbitalu.alufn=b000000
+      sixteenbitalu.a=0;
+      sixteenbitalu.b=0;
+      sixteenbitalu.z=0;
+      sixteenbitalu.v=0;
+      sixteenbitalu.n=0;
+      sixteenbitalu,alu=16b0;
+      case (state.q){
+        
+        //first test
+  	    state.ADDOVER:
+      	sixteenbitalu.a = b0111111111111111;
+        sixteenbitalu.b = b0000000000000001;
+        sixteenbitalu.alufn=b000000;
+        if(sixteenbitalu.alu=b1000000000000000 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==1) {
+            state.d = state.SUBOVER;
+          }
+          else {
+            state.d = state.FAIL;}
+            
+        state.SUBOVER:
+        
+      		
+	}
+}
+}
