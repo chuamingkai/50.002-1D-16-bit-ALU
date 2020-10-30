@@ -1,3 +1,7 @@
+//Do we need to include a counter, dff or edge_detector?
+//Not sure if the unfinished code is in the right format, if it is, then just will cont to harcode the rest。
+
+
 module alutester (
     input clk,  // clock 
     input rst,  // reset
