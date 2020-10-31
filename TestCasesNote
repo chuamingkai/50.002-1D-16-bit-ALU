@@ -11,6 +11,7 @@ const CMPEQ= b110011
 const CMPLT= b110101
 const CMPLE= b110111
 const MUL= b000010
+const DIV=b000011
 
 1. ADD_overflow
 0111111111111111 + 
