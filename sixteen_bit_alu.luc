@@ -2,7 +2,10 @@ module sixteen_bit_alu (
     input a[16], // 16-bit a input
     input b[16], // 16-bit b input
     input alufn[6], // 6 bit alufn signal
-    output alu[16]
+    output alu[16],
+    output z,
+    output v,
+    output n
   ) {
   
   .alufn(alufn)  {
@@ -18,6 +21,10 @@ module sixteen_bit_alu (
     compareunit.z = sixteenbitadder.z;
     compareunit.v = sixteenbitadder.v;
     compareunit.n = sixteenbitadder.n;
+    z = sixteenbitadder.z;
+    v = sixteenbitadder.v;
+    n = sixteenbitadder.n;
+    
     
     alu = 16b0;
     
