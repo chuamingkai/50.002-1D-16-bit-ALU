@@ -15,10 +15,10 @@ module subtester (
     
   sixteen_bit_alu sixteenbitalu;
   const SUBA = b1000000000000000;
-  const SUBB = b0111111111111111;
+  const SUBB = b0111111111111111; // 2's complement b1000000000000001
   const SUBC = b0000000000000010;
-  const SUBD = b0000000000000101;
-    
+  const SUBD = b0000000000000101; //2's complement b1111111111111010
+  	         
   always {
     counter.d = counter.q + 1;
     sixteenbitalu.alufn=b000001;
@@ -44,7 +44,7 @@ module subtester (
         } else if (counter.q[24:23] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
-            if(sixteenbitalu.alu == b1000000000000000 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==1) {
+            if(sixteenbitalu.alu == b0000000000000001 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==0) {
               counter.d = 0; // reset counter for next test
               subtesterstate.d = subtesterstate.SUBNO; //next state if the test is passed 
             } else {
@@ -62,7 +62,7 @@ module subtester (
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
-            if (sixteenbitalu.alu == 0000000000000111 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 0) {
+            if (sixteenbitalu.alu == b1111111111111111 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 1) {
               counter.d = 0; // reset counter for next test
               subtesterstate.d = subtesterstate.PASSALL;
             } else {
