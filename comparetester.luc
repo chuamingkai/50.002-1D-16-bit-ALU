@@ -9,7 +9,7 @@ module comparetester (
     //output opcode_led[6]
   ) {
   .clk(clk), .rst(rst)  {
-    fsm comparetesterstate = {START, EQUALTRUE, EQUALFALSE, LESSOVER, LESSNO, LESSCOMPARE, LESSTHANOREQUAL,LESSTHANOREQUALCOMPARE, FAIL}; //call the states by name.state
+    fsm comparetesterstate = {START, EQUALTRUE, EQUALFALSE, LESSOVER, LESSNO, LESSFALSE, LESSCOMPARE, LESSTHANOREQUAL,LESSTHANOREQUALCOMPARE,PASSALL, FAIL}; //call the states by name.state
     dff counter[25];
   }
     
@@ -21,12 +21,12 @@ module comparetester (
   const COMPARED= b1111111111111111;
   const COMPAREE= b0000000000000001; 
   const COMPAREF= b0000000000000100;
-  const COMPAREG= b0000000000000001; 
+  //const COMPAREG= b0000000000000001; 
   
     
   always {
     counter.d = counter.q + 1;
-    sixteenbitalu.alufn=6b0;
+    sixteenbitalu.alufn=b110011;
     sixteenbitalu.a=0;
     sixteenbitalu.b=0;
     error = 0;
@@ -35,45 +35,164 @@ module comparetester (
     
       comparetesterstate.START:
         if (start == 1) {
-          comparetesterstate.d = comparetesterstate.ADDOVER;
+          comparetesterstate.d = comparetesterstate.EQUALTRUE;
         }
         
       //first test
-      addteststate.ADDOVER:
-        sixteenbitalu.a = ADDA;
-        sixteenbitalu.b = ADDB;
+      addteststate.EQUALTRUE:
+        sixteenbitalu.a = COMPAREA;
+        sixteenbitalu.b = COMPAREA;
         if (counter.q[24:23] == 0) {
-          out = ADDA;
+            out = COMPAREA;
         } else if (counter.q[24:23] == 1) {
-          out = ADDB; 
-        } else if (counter.q[24:23] == 2) {
-          out = sixteenbitalu.alu;
-        } else if (counter.q[24:23] == 3) {
-            if(sixteenbitalu.alu == b1000000000000000 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==1) {
-              counter.d = 0; // reset counter for next test
-              comparetesterstate.d = comparetesterstate.ADDNO; //next state if the test is passed 
-            } else {
-              comparetesterstate.d = comparetesterstate.FAIL;
-            } 
-        }
-          
-      comparetesterstate.ADDNO:
-        sixteenbitalu.a = ADDC;
-        sixteenbitalu.b = ADDD;
-        if (counter.q[24:23] == 0) {
-            out = SUBA;
-        } else if (counter.q[24:23] == 1) {
-            out = SUBB; 
+            out = COMPAREA; 
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
-            if (sixteenbitalu.alu == 0000000000000111 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 0) {
+            if (sixteenbitalu.alu == 0000000000000001 && sixteenbitalu.z == 1) {
               counter.d = 0; // reset counter for next test
               comparetesterstate.d = comparetesterstate.PASSALL;
             } else {
               comparetesterstate.d = comparetesterstate.FAIL;
             } 
         }
+          
+      comparetesterstate.EQUALFALSE:
+        sixteenbitalu.a = COMPAREA;
+        sixteenbitalu.b = COMPAREB;
+        if (counter.q[24:23] == 0) {
+            out = COMPAREA;
+        } else if (counter.q[24:23] == 1) {
+            out = COMPAREB; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == 0000000000000000 && sixteenbitalu.z == 0) {
+              counter.d = 0; // reset counter for next test
+              comparetesterstate.d = comparetesterstate.LESSOVER;
+            } else {
+              comparetesterstate.d = comparetesterstate.FAIL;
+            } 
+        }
+	//more negative number subtract negative number 1111111111111101-1111111111111111 =0000000000000010
+	comparetesterstate.LESSOVER:
+        sixteenbitalu.a = COMPAREC;
+        sixteenbitalu.b = COMPARED;
+	sixteenbitalu.alufn=b110101;
+        if (counter.q[24:23] == 0) {
+            out = COMPAREC;
+        } else if (counter.q[24:23] == 1) {
+            out = COMPARED; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == 0000000000000001 && sixteenbitalu.v == 1 && sixteenbitalu.n == 0) {
+              counter.d = 0; // reset counter for next test
+              comparetesterstate.d = comparetesterstate.LESSNO;
+            } else {
+              comparetesterstate.d = comparetesterstate.FAIL;
+            } 
+        }
+	
+	comparetesterstate.LESSNO:
+        sixteenbitalu.a = COMPAREE;
+        sixteenbitalu.b = COMPAREF;
+	sixteenbitalu.alufn=b110101;
+        if (counter.q[24:23] == 0) {
+            out = COMPAREE;
+        } else if (counter.q[24:23] == 1) {
+            out = COMPAREF; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == 0000000000000001 && sixteenbitalu.v == 0 && sixteenbitalu.n == 1) {
+              counter.d = 0; // reset counter for next test
+              comparetesterstate.d = comparetesterstate.LESSFALSE;
+            } else {
+              comparetesterstate.d = comparetesterstate.FAIL;
+            } 
+        }
+	
+	comparetesterstate.LESSFALSE:
+        sixteenbitalu.a = COMPAREF;
+        sixteenbitalu.b = COMPAREE;
+	sixteenbitalu.alufn=b110101;
+        if (counter.q[24:23] == 0) {
+            out = COMPAREF;
+        } else if (counter.q[24:23] == 1) {
+            out = COMPAREE; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == 0000000000000000 && sixteenbitalu.v == 0 && sixteenbitalu.n == 0) {
+              counter.d = 0; // reset counter for next test
+              comparetesterstate.d = comparetesterstate.LESSCOMPARE;
+            } else {
+              comparetesterstate.d = comparetesterstate.FAIL;
+            } 
+        }
+	
+	comparetesterstate.LESSCOMPARE:
+        sixteenbitalu.a = COMPAREF;
+        sixteenbitalu.b = COMPAREF;
+	sixteenbitalu.alufn=b110101;
+        if (counter.q[24:23] == 0) {
+            out = COMPAREF;
+        } else if (counter.q[24:23] == 1) {
+            out = COMPAREF; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == 0000000000000000 && sixteenbitalu.v == 0 && sixteenbitalu.n == 0) {
+              counter.d = 0; // reset counter for next test
+              comparetesterstate.d = comparetesterstate.LESSTHANOREQUAL;
+            } else {
+              comparetesterstate.d = comparetesterstate.FAIL;
+            } 
+        }
+	
+	
+	comparetesterstate.LESSTHANOREQUAL:
+        sixteenbitalu.a = COMPAREE;
+        sixteenbitalu.b = COMPAREF;
+	sixteenbitalu.alufn=b110111;
+        if (counter.q[24:23] == 0) {
+            out = COMPAREE;
+        } else if (counter.q[24:23] == 1) {
+            out = COMPAREF; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == 0000000000000001 && sixteenbitalu.v == 0 && sixteenbitalu.n == 1 && sixteenbitalu.z == 0) {
+              counter.d = 0; // reset counter for next test
+              comparetesterstate.d = comparetesterstate.LESSTHANOREQUALCOMPARE;
+            } else {
+              comparetesterstate.d = comparetesterstate.FAIL;
+            } 
+        }
+	
+	
+	comparetesterstate.LESSTHANOREQUALCOMPARE:
+        sixteenbitalu.a = COMPAREF;
+        sixteenbitalu.b = COMPAREF;
+	sixteenbitalu.alufn=b110111;
+        if (counter.q[24:23] == 0) {
+            out = COMPAREF;
+        } else if (counter.q[24:23] == 1) {
+            out = COMPAREF; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == 0000000000000000 && sixteenbitalu.v == 0 && sixteenbitalu.n == 0 && sixteenbitalu.z == 1) {
+              counter.d = 0; // reset counter for next test
+              comparetesterstate.d = comparetesterstate.PASSALL;
+            } else {
+              comparetesterstate.d = comparetesterstate.FAIL;
+            } 
+        }
+	
+	
+	
       
       comparetesterstate.PASSALL:
         error = 0;
