@@ -26,15 +26,15 @@ module addtester (
     sixteenbitalu.b=0;
     error = 0;
     out = 0;
-    case (state.q) {//read state
+    case (addteststate.q) {//read state
     
-      state.START:
+      addteststate.START:
         if (start == 1) {
-          state.d = state.ADDOVER;
+          addteststate.d = addteststate.ADDOVER;
         }
         
       //first test
-      state.ADDOVER:
+      addteststate.ADDOVER:
         sixteenbitalu.a = ADDA;
         sixteenbitalu.b = ADDB;
         if (counter.q[24:23] == 0) {
@@ -46,13 +46,13 @@ module addtester (
         } else if (counter.q[24:23] == 3) {
             if(sixteenbitalu.alu == b1000000000000000 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==1) {
               counter.d = 0; // reset counter for next test
-              state.d = state.ADDNO; //next state if the test is passed 
+              addteststate.d = addteststate.ADDNO; //next state if the test is passed 
             } else {
-              state.d = state.FAIL;
+              addteststate.d = addteststate.FAIL;
             } 
         }
           
-      state.ADDNO:
+      addteststate.ADDNO:
         sixteenbitalu.a = ADDC;
         sixteenbitalu.b = ADDD;
         if (counter.q[24:23] == 0) {
@@ -64,16 +64,16 @@ module addtester (
         } else if (counter.q[24:23] == 3) {
             if (sixteenbitalu.alu == 0000000000000111 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 0) {
               counter.d = 0; // reset counter for next test
-              state.d = state.PASSALL;
+              addteststate.d = addteststate.PASSALL;
             } else {
-              state.d = state.FAIL;
+              addteststate.d = addteststate.FAIL;
             } 
         }
       
-      state.PASSALL:
+      addteststate.PASSALL:
         error = 0;
       
-      state.FAIL:
+      addteststate.FAIL:
         error = 1;      		
 	  }
 
