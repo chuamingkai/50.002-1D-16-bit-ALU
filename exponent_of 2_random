@@ -1,11 +1,12 @@
 module exponent (
     //inputs 
     input alufn[6], // 6 bit alufn signal
-    input a[16], // 16 bit a input
+    input a[4], // 4 bit a input max if unsigned number
     //input b[16], // 16 bit b input
     
     //outputs
     output exponent[16],
+    //At most only one position with 1
   ) {
   
  sig exp_interim[16];
