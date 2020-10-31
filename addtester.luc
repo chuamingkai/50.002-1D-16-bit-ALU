@@ -9,7 +9,7 @@ module addtester (
     //output opcode_led[6]
   ) {
   .clk(clk), .rst(rst)  {
-    fsm state = {START, ADDOVER, ADDNO, PASSALL, FAIL}; 
+    fsm addteststate = {START, ADDOVER, ADDNO, PASSALL, FAIL}; //call the states by name.state
     dff counter[25];
   }
     
