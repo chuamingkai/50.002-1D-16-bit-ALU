@@ -9,71 +9,71 @@ module subtester (
     //output opcode_led[6]
   ) {
   .clk(clk), .rst(rst)  {
-    fsm state = {START, ADDOVER, ADDNO, PASSALL, FAIL}; 
+    fsm subtesterstate = {START, SUBOVER, SUBNO, PASSALL, FAIL}; 
     dff counter[25];
   }
     
   sixteen_bit_alu sixteenbitalu;
-  const ADDA = b0111111111111111;
-  const ADDB = b0000000000000001;
-  const ADDC = b0000000000000010;
-  const ADDD = b0000000000000101;
+  const SUBA = b1000000000000000;
+  const SUBB = b0111111111111111;
+  const SUBC = b0000000000000010;
+  const SUBD = b0000000000000101;
     
   always {
     counter.d = counter.q + 1;
-    sixteenbitalu.alufn=6b0;
+    sixteenbitalu.alufn=b000001;
     sixteenbitalu.a=0;
     sixteenbitalu.b=0;
     error = 0;
     out = 0;
-    case (state.q) {//read state
+    case (subtesterstate.q) {//read state
     
-      state.START:
+      subtesterstate.START:
         if (start == 1) {
-          state.d = state.ADDOVER;
+          subtesterstate.d = subtesterstate.SUBOVER;
         }
         
       //first test
-      state.ADDOVER:
-        sixteenbitalu.a = ADDA;
-        sixteenbitalu.b = ADDB;
+      subtesterstate.SUBOVER:
+        sixteenbitalu.a = SUBA;
+        sixteenbitalu.b = SUBB;
         if (counter.q[24:23] == 0) {
-          out = ADDA;
+          out = SUBA;
         } else if (counter.q[24:23] == 1) {
-          out = ADDB; 
+          out = SUBB; 
         } else if (counter.q[24:23] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
             if(sixteenbitalu.alu == b1000000000000000 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==1) {
               counter.d = 0; // reset counter for next test
-              state.d = state.ADDNO; //next state if the test is passed 
+              subtesterstate.d = subtesterstate.SUBNO; //next state if the test is passed 
             } else {
-              state.d = state.FAIL;
+              subtesterstate.d = subtesterstate.FAIL;
             } 
         }
           
-      state.ADDNO:
-        sixteenbitalu.a = ADDC;
-        sixteenbitalu.b = ADDD;
+      state.SUBNO:
+        sixteenbitalu.a = SUBC;
+        sixteenbitalu.b = SUBD;
         if (counter.q[24:23] == 0) {
-            out = SUBA;
+            out = SUBC;
         } else if (counter.q[24:23] == 1) {
-            out = SUBB; 
+            out = SUBD; 
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
             if (sixteenbitalu.alu == 0000000000000111 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 0) {
               counter.d = 0; // reset counter for next test
-              state.d = state.PASSALL;
+              subtesterstate.d = subtesterstate.PASSALL;
             } else {
-              state.d = state.FAIL;
+              subtesterstate.d = subtesterstate.FAIL;
             } 
         }
       
-      state.PASSALL:
+      subtesterstate.PASSALL:
         error = 0;
       
-      state.FAIL:
+      subtesterstate.FAIL:
         error = 1;      		
 	  }
 
