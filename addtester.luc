@@ -8,72 +8,73 @@ module addtester (
     //output io_sel[4],
     //output opcode_led[6]
   ) {
-    .clk(clk), .rst(rst)  {
-      fsm state = {START, ADDOVER, ADDOVER2, PASSALL, FAIL}; 
-      dff counter[25];
-    }
+  .clk(clk), .rst(rst)  {
+    fsm state = {START, ADDOVER, ADDOVER2, PASSALL, FAIL}; 
+    dff counter[25];
+  }
     
-    sixteen_bit_alu sixteenbitalu;
-    const ADDA = b0111111111111111;
-    const ADDB = b0000000000000001;
-    const SUBA = 16b1;
-    const SUBB = 1;
-      
-    always { //ALWAYS_STATEMENTS
-  
-      counter.d = counter.q + 1;
-      sixteenbitalu.alufn=6b0;
-      sixteenbitalu.a=0;
-      sixteenbitalu.b=0;
-      error = 0;
-      out = 0;
-      case (state.q) {//read state
+  sixteen_bit_alu sixteenbitalu;
+  const ADDA = b0111111111111111;
+  const ADDB = b0000000000000001;
+  const SUBA = 16b1;
+  const SUBB = 1;
     
-        state.START:
-          if (start == 1) {
-            state.d = state.ADDOVER;
+  always {
+    counter.d = counter.q + 1;
+    sixteenbitalu.alufn=6b0;
+    sixteenbitalu.a=0;
+    sixteenbitalu.b=0;
+    error = 0;
+    out = 0;
+    case (state.q) {//read state
+    
+      state.START:
+        if (start == 1) {
+          state.d = state.ADDOVER;
         }
         
-        //first test
-        state.ADDOVER:
-          sixteenbitalu.a = ADDA;
-          sixteenbitalu.b = ADDB;
-          if (counter.q[24:23] == 0) {
-            out = ADDA;
-          } else if (counter.q[24:23] == 1) {
-            out = ADDB; 
-          } else if (counter.q[24:23] == 2) {
+      //first test
+      state.ADDOVER:
+        sixteenbitalu.a = ADDA;
+        sixteenbitalu.b = ADDB;
+        if (counter.q[24:23] == 0) {
+          out = ADDA;
+        } else if (counter.q[24:23] == 1) {
+          out = ADDB; 
+        } else if (counter.q[24:23] == 2) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if(sixteenbitalu.alu == b1000000000000000 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==1) {
+              counter.d = 0; // reset counter for next test
+              state.d = state.ADDOVER2; //next state if the test is passed 
+            } else {
+              state.d = state.FAIL;
+            } 
+        }
+          
+      state.ADDOVER2:
+        sixteenbitalu.a = SUBA;
+        sixteenbitalu.b = SUBB;
+        if (counter.q[24:23] == 0) {
+            out = SUBA;
+        } else if (counter.q[24:23] == 1) {
+            out = SUBB; 
+        } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
-          } else if (counter.q[24:23] == 3) {
-              if(sixteenbitalu.alu == b1000000000000000 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==1) {
-                state.d = state.ADDOVER2; //next state if the test is passed 
-              } else {
-                state.d = state.FAIL;
-              } 
-          }
-            
-        state.ADDOVER2:
-          sixteenbitalu.a = SUBA;
-          sixteenbitalu.b = SUBB;
-          if (counter.q[24:23] == 0) {
-              out = SUBA;
-          } else if (counter.q[24:23] == 1) {
-              out = SUBB; 
-          } else if (counter.q[24:23] == 2) {
-              out = sixteenbitalu.alu;
-          } else if (counter.q[24:23] == 3) {
-              if (sixteenbitalu.alu == 16b0 && sixteenbitalu.v == 1 && sixteenbitalu.z == 1 && sixteenbitalu.n == 0) {
-                state.d = state.PASSALL;
-              } else {
-                state.d = state.FAIL;
-              } 
-            }
-        
-        state.PASSALL:
-          error = 0;
-        
-        state.FAIL:
-          error = 1;      		
-	}
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == 16b0 && sixteenbitalu.v == 1 && sixteenbitalu.z == 1 && sixteenbitalu.n == 0) {
+              counter.d = 0; // reset counter for next test
+              state.d = state.PASSALL;
+            } else {
+              state.d = state.FAIL;
+            } 
+        }
+      
+      state.PASSALL:
+        error = 0;
+      
+      state.FAIL:
+        error = 1;      		
+	  }
 
 }
