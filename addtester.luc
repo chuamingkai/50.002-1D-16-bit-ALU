@@ -20,6 +20,8 @@ module addtester (
     const SUBB = 1;
       
     always { //ALWAYS_STATEMENTS
+  
+      counter.d = counter.q + 1;
       sixteenbitalu.alufn=6b0;
       sixteenbitalu.a=0;
       sixteenbitalu.b=0;
