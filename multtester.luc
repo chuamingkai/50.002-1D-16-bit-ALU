@@ -1,3 +1,5 @@
+//dummy code
+
 module multtester (
     input clk,  // clock 
     input rst,  // reset
