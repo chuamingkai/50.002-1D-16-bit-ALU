@@ -6,6 +6,9 @@ module alutester (
     input clk,  // clock 
     input rst,  // reset
     input start,
+    output error,
+    output out[16],
+    output io_led [3][8]   // LEDs on IO Shield
     //output io_seg[8],
     //output io_sel[4],
     //output opcode_led[6]
@@ -15,36 +18,45 @@ module alutester (
     .rst(rst) {
       
        
-      fsm state = {START, ADDOVER, SUBOVER, ADD, ....FAIL, PASSALL}; //edit in the states 
+      fsm alustate = {START, ADD ....FAIL, PASSALL}; //edit in the states 
       sixteen_bit_alu sixteenbitalu;
+      addtester add;
       
       
       }}}
       
       always { //ALWAYS_STATEMENTS
-      sixteenbitalu.alufn=b000000
+      
+      io_led[0][0:7]=0;
+      io_led[1][0:7]=0;
+      
+      sixteenbitalu.alufn=b000000;
       sixteenbitalu.a=0;
       sixteenbitalu.b=0;
       sixteenbitalu.z=0;
       sixteenbitalu.v=0;
       sixteenbitalu.n=0;
+      sixteenbitalu.out=0;
       sixteenbitalu.alu=16b0;
       case (state.q){//read state
         
-        //first test
-  	    state.ADDOVER:
-      	sixteenbitalu.a = b0111111111111111;
-        sixteenbitalu.b = b0000000000000001;
-        sixteenbitalu.alufn=b000000;
-        if(sixteenbitalu.alu=b1000000000000000 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==1) {
-            state.d = state.SUBOVER; //next state if the test is passed 
-          }
-          else {
-            state.d = state.FAIL;}
-            
-        state.SUBOVER:
+       comparetesterstate.START:
+        if (start == 1) {
+          comparetesterstate.d = alustate.ADD;
+        }
+        
+      //first test
+      alustate.ADD:
+      	io_led[0][0:7]=sixteenbitalu.out[0:7];
+      	io_led[1][0:7]=sixteenbitalu.out[8:15];
+        
+        if (add.error==0) {
+            alustate.d=alustate.SUB;
+            } else {
+              alustate.d = alustate.FAIL;
+            } 
         
       		
-	}
+	
 }
 }
