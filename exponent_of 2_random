@@ -1,0 +1,22 @@
+module exponent (
+    //inputs 
+    input alufn[6], // 6 bit alufn signal
+    input a[16], // 16 bit a input
+    //input b[16], // 16 bit b input
+    
+    //outputs
+    output exponent[16],
+  ) {
+  
+ sig exp_interim[16];
+  
+  
+always {
+    exponent = 16b0;
+    
+    }
+    exponent=pow(d2,a)
+    
+       
+  }
+}
