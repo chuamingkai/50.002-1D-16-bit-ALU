@@ -45,10 +45,15 @@ const DIV=b000011
 
 
 7. Shift right 
+1000111100001111 -> 0000000010001111 (shift 8)
+-> 0100011110000111 (shift 1)
 
 8. Shift left 
+1010101010111111 -> 1000000000000000 (shift 15)
 
 9. Signed shift right 
+0000111100001111->  0000000011110000 (shift 4)
+1111001100110000->  1111111111111100 (shift 10) //replace with signed first bit
 
 10. Multiplier 
 
