@@ -1,0 +1,104 @@
+module shifttester (
+    input clk,  // clock 
+    input rst,  // reset
+    input start, //initiate tester
+    output out[16], // output to flash on fpga; connect to FPGA led
+    output error //show pass or fail
+    //output io_seg[8],
+    //output io_sel[4],
+    //output opcode_led[6]
+  ) {
+  .clk(clk), .rst(rst)  {
+    fsm shifttesterstate = {START, SR8, SR1, SL15, SSR4, SSR10, PASSALL, FAIL}; 
+    dff counter[25];
+  }
+    
+  sixteen_bit_alu sixteenbitalu;
+  const B1 = b0000000000000001;
+  const B8 = b0000000000001000; 
+  const B15 =b0000000000001111;
+  const B4 = b0000000000000100; 
+  const B10= b0000000000001010;
+  const SHIFTA= b1000111100001111;
+  
+  const SHR= b100001;
+  const SRA= b100011;
+  	         
+  always {
+    counter.d = counter.q + 1;
+    sixteenbitalu.alufn=b100000;
+    sixteenbitalu.a=0;
+    sixteenbitalu.b=0;
+    error = 0;
+    out = 0;
+    case (subtesterstate.q) {//read state
+    
+      subtesterstate.START:
+        if (start == 1) {
+          subtesterstate.d = subtesterstate.SR8;
+        }
+        
+      //first test
+      subtesterstate.SR8:
+        sixteenbitalu.a = SHIFTA;
+        sixteenbitalu.b = B8;
+        if (counter.q[24:23] == 0) {
+          out = SUBA;
+        } else if (counter.q[24:23] == 1) {
+          out = SUBB; 
+        } else if (counter.q[24:23] == 2) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if(sixteenbitalu.alu == b0000000010001111) {
+              counter.d = 0; // reset counter for next test
+              subtesterstate.d = subtesterstate.SR1; //next state if the test is passed 
+            } else {
+              subtesterstate.d = subtesterstate.FAIL;
+            } 
+        }
+          
+      state.SR1:
+        sixteenbitalu.a = SHIFTA;
+        sixteenbitalu.b = B1;
+        if (counter.q[24:23] == 0) {
+            out = SUBC;
+        } else if (counter.q[24:23] == 1) {
+            out = SUBD; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == b0100011110000111  ) {
+              counter.d = 0; // reset counter for next test
+              subtesterstate.d = subtesterstate.SL15;
+            } else {
+              subtesterstate.d = subtesterstate.FAIL;
+            } 
+        }
+      
+      state.SL15:
+        sixteenbitalu.a = SUBC;
+        sixteenbitalu.b = SUBC;
+        if (counter.q[24:23] == 0) {
+            out = SUBC;
+        } else if (counter.q[24:23] == 1) {
+            out = SUBC; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == b0000000000000000 && sixteenbitalu.v == 0 && sixteenbitalu.z == 1 && sixteenbitalu.n == 0) {
+              counter.d = 0; // reset counter for next test
+              subtesterstate.d = subtesterstate.PASSALL;
+            } else {
+              subtesterstate.d = subtesterstate.FAIL;
+            } 
+        }
+      
+      
+      subtesterstate.PASSALL:
+        error = 0;
+      
+      subtesterstate.FAIL:
+        error = 1;      		
+	  }
+
+}
