@@ -30,6 +30,7 @@ module addtester (
     
       addteststate.START:
         if (start == 1) {
+	  counter.d = 0; // reset counter
           addteststate.d = addteststate.ADDOVER;
         }
         
