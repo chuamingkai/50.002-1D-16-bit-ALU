@@ -39,6 +39,7 @@ module shifttester (
     
       shifttesterstate.START:
         if (start == 1) {
+	  counter.d = 0;
           shifttesterstate.d = shifttesterstate.SR8;
         }
         
