@@ -38,6 +38,7 @@ module comparetester (
     
       comparetesterstate.START:
         if (start == 1) {
+	  counter.d = 0;
           comparetesterstate.d = comparetesterstate.EQUALTRUE;
         }
         
