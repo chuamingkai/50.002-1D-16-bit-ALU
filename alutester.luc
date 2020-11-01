@@ -40,9 +40,9 @@ module alutester (
       sixteenbitalu.alu=16b0;
       case (state.q){//read state
         
-       comparetesterstate.START:
+       alustate .START:
         if (start == 1) {
-          comparetesterstate.d = alustate.ADD;
+          alustate .d = alustate.ADD;
         }
         
       //first test
