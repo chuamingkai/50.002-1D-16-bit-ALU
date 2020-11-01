@@ -25,11 +25,12 @@ module shifttester (
   const SHIFTD= b1111001100110000;
   
   const SHR= b100001;
+  const SHL= b100000;
   const SRA= b100011;
   	         
   always {
     counter.d = counter.q + 1;
-    sixteenbitalu.alufn=b100000;
+    sixteenbitalu.alufn=SHR;
     sixteenbitalu.a=0;
     sixteenbitalu.b=0;
     error = 0;
@@ -81,6 +82,8 @@ module shifttester (
       shifttesterstate.SL15:
         sixteenbitalu.a = SHIFTB;
         sixteenbitalu.b = B15;
+    	sixteenbitalu.alufn=SHL;
+	
         if (counter.q[24:23] == 0) {
             out = SUBC;
         } else if (counter.q[24:23] == 1) {
@@ -99,6 +102,7 @@ module shifttester (
 	shifttesterstate.SSR4:
         sixteenbitalu.a = SHIFTC;
         sixteenbitalu.b = B4;
+	sixteenbitalu.alufn=SRA;
         if (counter.q[24:23] == 0) {
             out = SUBC;
         } else if (counter.q[24:23] == 1) {
@@ -117,6 +121,7 @@ module shifttester (
        shifttesterstate.SSR10:
         sixteenbitalu.a = SHIFTD;
         sixteenbitalu.b = B10;
+	sixteenbitalu.alufn=SRA;
         if (counter.q[24:23] == 0) {
             out = SUBC;
         } else if (counter.q[24:23] == 1) {
