@@ -32,6 +32,7 @@ module multtester (
     
       subtesterstate.START:
         if (start == 1) {
+	  counter.d = 0;
           subtesterstate.d = subtesterstate.SUBOVER;
         }
         
