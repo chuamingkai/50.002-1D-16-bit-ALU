@@ -48,9 +48,9 @@ module shifttester (
         sixteenbitalu.a = SHIFTA;
         sixteenbitalu.b = B8;
         if (counter.q[24:23] == 0) {
-          out = SUBA;
+          out = SHIFTA;
         } else if (counter.q[24:23] == 1) {
-          out = SUBB; 
+          out = B8; 
         } else if (counter.q[24:23] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
@@ -66,9 +66,9 @@ module shifttester (
         sixteenbitalu.a = SHIFTA;
         sixteenbitalu.b = B1;
         if (counter.q[24:23] == 0) {
-            out = SUBC;
+            out = SHIFTA;
         } else if (counter.q[24:23] == 1) {
-            out = SUBD; 
+            out = B1; 
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
@@ -86,9 +86,9 @@ module shifttester (
     	sixteenbitalu.alufn=SHL;
 	
         if (counter.q[24:23] == 0) {
-            out = SUBC;
+            out = SHIFTB;
         } else if (counter.q[24:23] == 1) {
-            out = SUBC; 
+            out = B15; 
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
@@ -105,9 +105,9 @@ module shifttester (
         sixteenbitalu.b = B4;
 	sixteenbitalu.alufn=SRA;
         if (counter.q[24:23] == 0) {
-            out = SUBC;
+            out = SHIFTC;
         } else if (counter.q[24:23] == 1) {
-            out = SUBC; 
+            out = B4; 
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
@@ -124,9 +124,9 @@ module shifttester (
         sixteenbitalu.b = B10;
 	sixteenbitalu.alufn=SRA;
         if (counter.q[24:23] == 0) {
-            out = SUBC;
+            out = SHIFTD;
         } else if (counter.q[24:23] == 1) {
-            out = SUBC; 
+            out = B10; 
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
