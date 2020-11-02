@@ -57,9 +57,9 @@ module addtester (
         sixteenbitalu.a = ADDC;
         sixteenbitalu.b = ADDD;
         if (counter.q[24:23] == 0) {
-            out = SUBA;
+            out = ADDC;
         } else if (counter.q[24:23] == 1) {
-            out = SUBB; 
+            out = ADDD; 
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
