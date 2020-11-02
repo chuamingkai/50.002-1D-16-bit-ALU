@@ -43,7 +43,7 @@ module comparetester (
         }
         
       //first test
-      addteststate.EQUALTRUE:
+      comparetesterstate.EQUALTRUE:
         sixteenbitalu.a = COMPAREA;
         sixteenbitalu.b = COMPAREA;
 	//compareunit.z == 1;
