@@ -53,7 +53,7 @@ module subtester (
             } 
         }
           
-      state.SUBNO:
+      subtesterstate.SUBNO:
         sixteenbitalu.a = SUBC;
         sixteenbitalu.b = SUBD;
         if (counter.q[24:23] == 0) {
@@ -71,7 +71,7 @@ module subtester (
             } 
         }
       
-      state.SUBZ:
+      subtesterstate.SUBZ:
         sixteenbitalu.a = SUBC;
         sixteenbitalu.b = SUBC;
         if (counter.q[24:23] == 0) {
