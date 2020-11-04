@@ -32,6 +32,7 @@ a) Addtester
 0000000000000111 
 (Z=0, V=0, N=0)
 
+
 b) Subtester
 
 1. SUBTRACT_overflow
@@ -55,48 +56,63 @@ b) Subtester
 
 
 c) Comparetester
+//alu[15:1]=15b0 and alu[0]=boolean
 
 1. Compare (=) subtraction ouput=0 => Z=1 
 FALSE: 1000000000000000 vs 1000000000000001
 TRUE:  1000000000000000 vs 1000000000000000 = also shows if Z is working
 
 2.Compare (<) subtraction ouput; n xor v(n=0 means positive difference, thus not smaller unless there's overflow; vice versa)
-1111111111111101 1111111111111111 =0000000000000010 (eg. overflow) 
-0000000000000001 00000000000000100 (no overflow) 
-0000000000000100 0000000000000100 should give false
+TRUE: 1111111111111101- 1111111111111111 =0000000000000010 (eg. overflow when A is more negative than B) 
+TRUE: 0000000000000001 00000000000000100 (eg. no overflow when A and B are both postive and A<B) 
+EQUALTRUE: 0000000000000100 0000000000000100 should give false
 
-6.Compare(<=) z or (n xor v) 
-0000000000000100 0000000000000100 should give true 
-0000000000000100 0000000000000001 
+3.Compare(<=) z or (n xor v) 
+EQUALTRUE: 0000000000000100 0000000000000100 should give true 
+FALSE: 0000000000000100 0000000000000001 
+
 
 d) Shifttester: 
 
-7. Shift right 
-1000111100001111 -> 0000000010001111 (shift 8)
+1. Shift right 
+1000111100001111 
+-> 0000000010001111 (shift 8)
 -> 0100011110000111 (shift 1)
 
-8. Shift left 
-1010101010111111 -> 1000000000000000 (shift 15)
+2. Shift left 
+1010101010111111 
+-> 1000000000000000 (shift 15)
 
-9. Signed shift right 
+3. Signed shift right 
 0000111100001111->  0000000011110000 (shift 4)
 1111001100110000->  1111111111111100 (shift 10) //replace with signed first bit
 
 
 e) Booltester
+Using the 2 values: 
+0000111111111111
+0000000000001111 //bitwise operation and can test for 0,0 0,1 1,0 1,1 bit combinations
 
-Boolean 
+1. AND: b0000000000001111
+2. OR:  b0000111111111111 
+3. A:   b1111000000001111 
+4. XOR: b0000111111110000 
+
 
 f) Multtester
 
-10. Multiplier 
-
-1111111111111111 0000000000000000 => 0000000000000000 MULTZERO
-1011110000111011 × 1111001100111000 NEG
+1. MULTZERO
+1111111111111111 x 0000000000000000 = 0000000000000000 
+2. NEG * NEG 
+1011110000111011 × 1111001100111000
 = (01011001011010101)0010110111101000
+3. MULTONE
 1011110000111011 x 0000000000000001 = 1011110000111011  MULTONE
+4. POS * POS
 0111100001110110 × 0000111000000001 POS 
 = (011010010110)1110110001110110
 
 
-g) other functionality testing
+g) Factorialtester
+
+h) Modulotester
