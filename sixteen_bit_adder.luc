@@ -11,9 +11,8 @@ module sixteen_bit_adder (
     output n
   ) {
   
- sig add_interim[16];
-  
- sig xor_b;
+  modulo modulo(.a(a), .b(b));
+  sig add_interim[16];
   
   
 always {
@@ -24,24 +23,14 @@ always {
     }else{
       add_interim = a - b;
     }
-    
-    
-    if(b[15] == 0 && alufn[0] == 0){
-      xor_b = 0;
-    }else if(b[15] == 1 && alufn[0] == 0){
-      xor_b = 1;
-    }else if(b[15] == 0 && alufn[0] == 1){
-      xor_b = 1;
-    }else{
-      xor_b = 0;
-    }
+       
     
     if(add_interim == 0){
        z = 1;
     }else{
     z = 0;
     }
-    v = (((a[15])&(xor_b)&(~add_interim[15])) | ((~a[15])&(~xor_b)&(add_interim[15])));
+    v = (((a[15])&(b[15])&(~add_interim[15])) | ((~a[15])&(~b[15])&(add_interim[15])));
     n = add_interim[15];
     
     case (alufn[1:0]) {
@@ -59,6 +48,10 @@ always {
       b11:
         // divide
         sum = a / b;
+        // mudulo
+        if (alufn[2] == b1) {
+          sum = modulo.out;
+        }
     }
     
        

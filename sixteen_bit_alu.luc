@@ -2,11 +2,17 @@ module sixteen_bit_alu (
     input a[16], // 16-bit a input
     input b[16], // 16-bit b input
     input alufn[6], // 6 bit alufn signal
+    input clk, // clock
+    input rst, // reset
     output alu[16],
     output z,
     output v,
     output n
   ) {
+  
+  .clk(clk), .rst(rst) {
+    factorial factorial(.in(a));
+  }
   
   .alufn(alufn)  {
     compare compareunit;
@@ -32,6 +38,9 @@ module sixteen_bit_alu (
       b00:
         // perform add operation
         alu = sixteenbitadder.sum;
+        if (alufn[2] == b1) {
+          alu = factorial.out;
+        }
       
       b01:
         // perform booelan operation
