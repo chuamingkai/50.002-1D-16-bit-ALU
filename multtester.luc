@@ -1,4 +1,3 @@
-//dummy code
 
 module multtester (
     input clk,  // clock 
@@ -11,15 +10,15 @@ module multtester (
     //output opcode_led[6]
   ) {
   .clk(clk), .rst(rst)  {
-    fsm multtesterstate = {START, MULT1, MULT2, PASSALL, FAIL}; 
+    fsm multtesterstate = {START, MULTZERO, MULTONE, MULTNEG, MULTPOS, PASSALL, FAIL}; 
     dff counter[25];
   }
     
   sixteen_bit_alu sixteenbitalu;
-  const SUBA = b1000000000000000;
-  const SUBB = b0111111111111111; // 2's complement b1000000000000001
-  const SUBC = b0000000000000010;
-  const SUBD = b0000000000000101; //2's complement b1111111111111010
+  const NEGA = b1011110000111011;
+  const NEGB = b1111001100111000; 
+  const POSA = b0111100001110110 ;
+  const POSB = b0000111000000001 ;
   	         
   always {
     counter.d = counter.q + 1;
@@ -28,18 +27,18 @@ module multtester (
     sixteenbitalu.b=0;
     error = 0;
     out = 0;
-    case (subtesterstate.q) {//read state
+    case (multtesterstate.q) {//read state
     
-      subtesterstate.START:
+      multtesterstate.START:
         if (start == 1) {
 	  counter.d = 0;
-          subtesterstate.d = subtesterstate.SUBOVER;
+          multtesterstate.d = multtesterstate.MULTZERO;
         }
         
       //first test
-      subtesterstate.SUBOVER:
-        sixteenbitalu.a = SUBA;
-        sixteenbitalu.b = SUBB;
+      multtesterstate.MULTZERO:
+        sixteenbitalu.a = NEGA;
+        sixteenbitalu.b = 16b0;
         if (counter.q[24:23] == 0) {
           out = SUBA;
         } else if (counter.q[24:23] == 1) {
@@ -47,17 +46,17 @@ module multtester (
         } else if (counter.q[24:23] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
-            if(sixteenbitalu.alu == b0000000000000001 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==0) {
+            if(sixteenbitalu.alu == b0000000000000000 ) {
               counter.d = 0; // reset counter for next test
-              subtesterstate.d = subtesterstate.SUBNO; //next state if the test is passed 
+              multtesterstate.d = multtesterstate.MULTONE; //next state if the test is passed 
             } else {
-              subtesterstate.d = subtesterstate.FAIL;
+              multtesterstate.d = multtesterstate.FAIL;
             } 
         }
           
-      state.SUBNO:
-        sixteenbitalu.a = SUBC;
-        sixteenbitalu.b = SUBD;
+      multtesterstate.MULTONE:
+        sixteenbitalu.a = POSA;
+        sixteenbitalu.b = b0000000000000001;
         if (counter.q[24:23] == 0) {
             out = SUBC;
         } else if (counter.q[24:23] == 1) {
@@ -65,18 +64,55 @@ module multtester (
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
-            if (sixteenbitalu.alu == b1111111111111111 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 1) {
+            if (sixteenbitalu.alu == b0111100001110110) {
               counter.d = 0; // reset counter for next test
-              subtesterstate.d = subtesterstate.PASSALL;
+              multtesterstate.d = multtesterstate.MULTNEG;
             } else {
-              subtesterstate.d = subtesterstate.FAIL;
+              multtesterstate.d = multtesterstate.FAIL;
+            } 
+        }
+	
+	multtesterstate.MULTNEG:
+        sixteenbitalu.a = NEGA;
+        sixteenbitalu.b = NEGB;
+        if (counter.q[24:23] == 0) {
+            out = SUBC;
+        } else if (counter.q[24:23] == 1) {
+            out = SUBD; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == b0010110111101000) {
+              counter.d = 0; // reset counter for next test
+              multtesterstate.d = multtesterstate.MULTPOS;
+            } else {
+              multtesterstate.d = multtesterstate.FAIL;
             } 
         }
       
-      subtesterstate.PASSALL:
+      
+      multtesterstate.MULTPOS:
+        sixteenbitalu.a = POSA;
+        sixteenbitalu.b = POSB;
+        if (counter.q[24:23] == 0) {
+            out = SUBC;
+        } else if (counter.q[24:23] == 1) {
+            out = SUBD; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu == b1110110001110110) {
+              counter.d = 0; // reset counter for next test
+              multtesterstate.d = multtesterstate.PASSALL;
+            } else {
+              multtesterstate.d = multtesterstate.FAIL;
+            } 
+        }
+      
+      multtesterstate.PASSALL:
         error = 0;
       
-      subtesterstate.FAIL:
+      multtesterstate.FAIL:
         error = 1;      		
 	  }
 
