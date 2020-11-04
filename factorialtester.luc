@@ -1,0 +1,104 @@
+module factorialtester (
+    input clk,  // clock 
+    input rst,  // reset
+    input start, //initiate tester
+    output out[16], // output to flash on fpga; connect to FPGA led
+    output error //show pass or fail
+    //output io_seg[8],
+    //output io_sel[4],
+    //output opcode_led[6]
+  ) {
+  .clk(clk), .rst(rst)  {
+    fsm factorialtesterstate = {START, ZERO, ONE, FIVE, PASSALL, FAIL}; 
+    dff counter[25];
+  }
+    
+  sixteen_bit_alu sixteenbitalu;
+
+  	         
+  always {
+    counter.d = counter.q + 1;
+    sixteenbitalu.alufn=b000110;
+    sixteenbitalu.a=0;
+    sixteenbitalu.b=0;
+    error = 0;
+    out = 0;
+    case (factorialtesterstate.q) {//read state
+    
+      factorialtesterstate.START:
+        if (start == 1) {
+	  counter.d = 0;
+          factorialtesterstate.d = factorialtesterstate.ZERO;
+        }
+        
+      //first test
+      factorialtesterstate.ZERO:
+        sixteenbitalu.a = 16b0;
+        //sixteenbitalu.b = 16b0;
+        if (counter.q[24:23] == 0) {
+          out = 16b0;
+        } 
+        //else if (counter.q[24:23] == 1) {
+         // out = SUBB; 
+        //} 
+        else if (counter.q[24:23] == 1) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 2) {
+            if(sixteenbitalu.alu == b0000000000000001 ) {
+              counter.d = 0; // reset counter for next test
+              factorialtesterstate.d = factorialtesterstate.ONE; //next state if the test is passed 
+            } else {
+              factorialtesterstate.d = factorialtesterstate.FAIL;
+            } 
+        }
+          
+      factorialtesterstate.ONE:
+        sixteenbitalu.a = b0000000000000001;
+        //sixteenbitalu.b = b0000000000000001;
+        if (counter.q[24:23] == 0) {
+            out = b0000000000000001;
+        } 
+        //else if (counter.q[24:23] == 1) {
+            //out = SUBD; 
+        //} 
+        else if (counter.q[24:23] == 1) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 2) {
+            if (sixteenbitalu.alu == b0000000000000001) {
+              counter.d = 0; // reset counter for next test
+              factorialtesterstate.d = factorialtesterstate.FIVE;
+            } else {
+              factorialtesterstate.d = factorialtesterstate.FAIL;
+            } 
+        }
+	
+	factorialtesterstate.FIVE:
+        sixteenbitalu.a = b0000000000000101;
+        //sixteenbitalu.b = NEGB;
+        if (counter.q[24:23] == 0) {
+            out = b0000000000000101;
+        } 
+       // else if (counter.q[24:23] == 1) {
+           // out = SUBD; 
+        //} 
+        else if (counter.q[24:23] == 1) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 2) {
+            if (sixteenbitalu.alu == b0000000001111000) {
+              counter.d = 0; // reset counter for next test
+              factorialtesterstate.d = factorialtesterstate.PASSALL;
+            } else {
+              factorialtesterstate.d = factorialtesterstate.FAIL;
+            } 
+        }
+      
+      
+    
+      factorialtesterstate.PASSALL:
+        error = 0;
+      
+      factorialtesterstate.FAIL:
+        error = 1;      		
+	  }
+
+}
