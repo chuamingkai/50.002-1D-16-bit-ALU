@@ -5,7 +5,7 @@ module factorial (
     output out
   ) {
   
-  var trans_out; //transient out; keep track of factorial value
+  sig trans_out; //transient out; keep track of factorial value
 
   .clk(clk), .rst(rst) {
     fsm factorialState = {START, COUNTING, FINISH};
