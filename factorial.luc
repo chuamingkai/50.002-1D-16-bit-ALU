@@ -1,0 +1,39 @@
+module factorial (
+    input clk,  // clock
+    input rst,  // reset
+    input in[16], //recommend values from 1 to 8
+    output out
+  ) {
+  
+  sig trans_out; //transient out; keep track of factorial value
+
+  .clk(clk), .rst(rst) {
+    fsm factorialState = {START, COUNTING, FINISH};
+    dff counter[16];
+  }
+  
+  always {
+    trans_out = 0;
+    out = 0;
+    counter.d = 0;
+    
+    case (factorialState.q) {
+      factorialState.START:
+        trans_out = 1;
+        counter.d = 1;
+        factorialState.d = factorialState.COUNTING;
+        
+      factorialState.COUNTING:
+        trans_out = trans_out * counter.q;
+        if (counter.q == in) {
+          factorialState.d = factorialState.FINISH;
+        } else {
+          counter.d = counter.q + 1;
+        }
+        
+      factorialState.FINISH:
+        counter.d = counter.q;
+        out = trans_out;        
+        
+  }
+}
