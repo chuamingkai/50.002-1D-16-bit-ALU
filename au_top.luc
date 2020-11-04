@@ -14,6 +14,8 @@ module au_top (
   sig rst;                  // reset signal
   const ADDA = b0111111111111111;
   const ADDB = b0000000000000001;
+  const OPCODE= b00000;
+  //change the values for manual testing 
   .clk(clk) {
     // The reset conditioner is used to synchronize the reset signal to the FPGA
     // clock. This ensures the entire FPGA comes out of reset at the same time.
@@ -32,7 +34,8 @@ module au_top (
        
     io_seg = 8hff;          // turn segments off
     io_sel = 4hf;
-    sixteenbitalu.alufn = b000000;
+    //sixteenbitalu.alufn = b000000;
+    sixteenbitalu.alufn =OPCODE;
     sixteenbitalu.a = ADDA;
     sixteenbitalu.b = ADDB;
     
