@@ -13,7 +13,9 @@ const CMPEQ= b110011
 const CMPLT= b110101
 const CMPLE= b110111
 const MUL= b000010
-const DIV= b000011 //to add factorial and modulo
+const DIV= b000011 
+const FACTORIAL = b000110
+const MODULO = b000111 
 
 Test Cases:
 (add edgecases and invalid alufn)
