@@ -9,71 +9,110 @@ module booltester (
     //output opcode_led[6]
   ) {
   .clk(clk), .rst(rst)  {
-    fsm addteststate = {START, AND, OR, A, XOR,FAIL,PASSALL}; //able to test for 00,01, 10 and 11 combinations for each test since operations are bitwise
+    fsm boolteststate = {START, AND, OR, A, XOR,FAIL,PASSALL}; //able to test for 00,01, 10 and 11 combinations for each test since operations are bitwise
     dff counter[25];
   }
     
   sixteen_bit_alu sixteenbitalu;
-  const BOOA = b0000111111111111;
-  const BOOB = b0000000000001111;
-  
+  const BOOLA = b0000111111111111;
+  const BOOLB = b0000000000001111;
+
     
   always {
     counter.d = counter.q + 1;
-    sixteenbitalu.alufn=6b0;
+    sixteenbitalu.alufn=b011000;//start with and
     sixteenbitalu.a=0;
     sixteenbitalu.b=0;
     error = 0;
     out = 0;
-    case (addteststate.q) {//read state
+    case (boolteststate.q) {//read state
     
-      addteststate.START:
+      boolteststate.START:
         if (start == 1) {
 	  counter.d = 0; // reset counter
-          addteststate.d = addteststate.ADDOVER;
+          boolteststate.d = boolteststate.AND;
         }
         
       //first test
-      addteststate.ADDOVER:
-        sixteenbitalu.a = ADDA;
-        sixteenbitalu.b = ADDB;
+      boolteststate.AND:
+        sixteenbitalu.a = BOOA;
+        sixteenbitalu.b = BOOB;
         if (counter.q[24:23] == 0) {
-          out = ADDA;
+          out = BOOLA;
         } else if (counter.q[24:23] == 1) {
-          out = ADDB; 
+          out = BOOLB; 
         } else if (counter.q[24:23] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
-            if(sixteenbitalu.alu == b1000000000000000 && sixteenbitalu.v==1 && sixteenbitalu.z==0 && sixteenbitalu.n==1) {
+            if(sixteenbitalu.alu == b0000000000001111) {
               counter.d = 0; // reset counter for next test
-              addteststate.d = addteststate.ADDNO; //next state if the test is passed 
+              boolteststate.d = boolteststate.OR; //next state if the test is passed 
             } else {
-              addteststate.d = addteststate.FAIL;
+              boolteststate.d = boolteststate.FAIL;
             } 
         }
           
-      addteststate.ADDNO:
-        sixteenbitalu.a = ADDC;
-        sixteenbitalu.b = ADDD;
+      boolteststate.OR:
+        sixteenbitalu.a = BOOLA;
+        sixteenbitalu.b = BOOLB;
+	alu.alufn=b011110;
         if (counter.q[24:23] == 0) {
-            out = ADDC;
+            out = BOOLA;
         } else if (counter.q[24:23] == 1) {
-            out = ADDD; 
+            out = BOOLB; 
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
-            if (sixteenbitalu.alu == 0000000000000111 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 0) {
+            if (sixteenbitalu.alu == b0000111111111111 ){
               counter.d = 0; // reset counter for next test
-              addteststate.d = addteststate.PASSALL;
+              boolteststate.d = boolteststate.A;
             } else {
-              addteststate.d = addteststate.FAIL;
+              boolteststate.d = boolteststate.FAIL;
+            } 
+        }
+	
+	 boolteststate.A:
+        sixteenbitalu.a = BOOLA;
+        sixteenbitalu.b = BOOLB;
+	alu.alufn=b011010;
+        if (counter.q[24:23] == 0) {
+            out = BOOLA;
+        } else if (counter.q[24:23] == 1) {
+            out = BOOLB; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu ==   b1111000000001111 ){
+              counter.d = 0; // reset counter for next test
+              boolteststate.d = boolteststate.XOR;
+            } else {
+              boolteststate.d = boolteststate.FAIL;
+            } 
+        }
+	
+	 boolteststate.A:
+        sixteenbitalu.a = BOOLA;
+        sixteenbitalu.b = BOOLB;
+	alu.alufn=b010110;
+        if (counter.q[24:23] == 0) {
+            out = BOOLA;
+        } else if (counter.q[24:23] == 1) {
+            out = BOOLB; 
+        } else if (counter.q[24:23] == 2) {
+            out = sixteenbitalu.alu;
+        } else if (counter.q[24:23] == 3) {
+            if (sixteenbitalu.alu ==   b0000111111110000 ){
+              counter.d = 0; // reset counter for next test
+              boolteststate.d = boolteststate.PASSALL;
+            } else {
+              boolteststate.d = boolteststate.FAIL;
             } 
         }
       
-      addteststate.PASSALL:
+      boolteststate.PASSALL:
         error = 0;
       
-      addteststate.FAIL:
+      boolteststate.FAIL:
         error = 1;      		
 	  }
 
