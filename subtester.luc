@@ -17,7 +17,7 @@ module subtester (
   const SUBA = b1000000000000000;
   const SUBB = b0111111111111111; // 2's complement b1000000000000001
   const SUBC = b0000000000000010;
-  const SUBD = b0000000000000101; //2's complement b1111111111111010
+  const SUBD = b0000000000000101; //2's complement  b1111111111111011
   	         
   always {
     counter.d = counter.q + 1;
