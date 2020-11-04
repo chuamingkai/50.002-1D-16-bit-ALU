@@ -32,12 +32,9 @@ always {
       xor_b = 0;
     }else if(b[15] == 0 && alufn[0] == 1){
       xor_b = 0;
-    }else if(b[15] == 1 && alufn[0] == 1){
-      xor_b = 1;
     }else{
-      xor_b = 0;
+      xor_b = 1;
     }
-       
     
     if(add_interim == 0){
        z = 1;
