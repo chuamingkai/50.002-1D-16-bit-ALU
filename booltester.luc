@@ -90,7 +90,7 @@ module booltester (
             } 
         }
 	
-	 boolteststate.A:
+	 boolteststate.XOR:
         sixteenbitalu.a = BOOLA;
         sixteenbitalu.b = BOOLB;
 	alu.alufn=b010110;
