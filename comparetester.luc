@@ -11,10 +11,9 @@ module comparetester (
   .clk(clk), .rst(rst)  {
     fsm comparetesterstate = {START, EQUALTRUE, EQUALFALSE, LESSOVER, LESSNO, LESSFALSE, LESSCOMPARE, LESSTHANOREQUAL,LESSTHANOREQUALCOMPARE,PASSALL, FAIL}; //call the states by name.state
     dff counter[25];
+    sixteen_bit_alu sixteenbitalu;
   }
     
-  sixteen_bit_alu sixteenbitalu;
-  
   const COMPAREA= b1000000000000000;
   const COMPAREB= b1000000000000001;
   const COMPAREC= b1111111111111101;

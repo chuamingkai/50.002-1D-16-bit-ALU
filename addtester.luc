@@ -11,9 +11,10 @@ module addtester (
   .clk(clk), .rst(rst)  {
     fsm addteststate = {START, ADDOVER, ADDNO, PASSALL, FAIL}; //call the states by name.state
     dff counter[25];
+    sixteen_bit_alu sixteenbitalu;
   }
     
-  sixteen_bit_alu sixteenbitalu;
+  
   const ADDA = b0111111111111111;
   const ADDB = b0000000000000001;
   const ADDC = b0000000000000010;

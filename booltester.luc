@@ -11,9 +11,10 @@ module booltester (
   .clk(clk), .rst(rst)  {
     fsm boolteststate = {START, AND, OR, A, XOR,FAIL,PASSALL}; //able to test for 00,01, 10 and 11 combinations for each test since operations are bitwise
     dff counter[25];
+    sixteen_bit_alu sixteenbitalu;
   }
     
-  sixteen_bit_alu sixteenbitalu;
+  
   const BOOLA = b0000111111111111;
   const BOOLB = b0000000000001111;
 
@@ -29,14 +30,14 @@ module booltester (
     
       boolteststate.START:
         if (start == 1) {
-	  counter.d = 0; // reset counter
+          counter.d = 0; // reset counter
           boolteststate.d = boolteststate.AND;
         }
         
       //first test
       boolteststate.AND:
-        sixteenbitalu.a = BOOA;
-        sixteenbitalu.b = BOOB;
+        sixteenbitalu.a = BOOLA;
+        sixteenbitalu.b = BOOLB;
         if (counter.q[24:23] == 0) {
           out = BOOLA;
         } else if (counter.q[24:23] == 1) {
@@ -55,7 +56,7 @@ module booltester (
       boolteststate.OR:
         sixteenbitalu.a = BOOLA;
         sixteenbitalu.b = BOOLB;
-	alu.alufn=b011110;
+        sixteenbitalu.alufn=b011110;
         if (counter.q[24:23] == 0) {
             out = BOOLA;
         } else if (counter.q[24:23] == 1) {
@@ -74,7 +75,7 @@ module booltester (
 	 boolteststate.A:
         sixteenbitalu.a = BOOLA;
         sixteenbitalu.b = BOOLB;
-	alu.alufn=b011010;
+        sixteenbitalu.alufn=b011010;
         if (counter.q[24:23] == 0) {
             out = BOOLA;
         } else if (counter.q[24:23] == 1) {
@@ -93,7 +94,7 @@ module booltester (
 	 boolteststate.XOR:
         sixteenbitalu.a = BOOLA;
         sixteenbitalu.b = BOOLB;
-	alu.alufn=b010110;
+        sixteenbitalu.alufn=b010110;
         if (counter.q[24:23] == 0) {
             out = BOOLA;
         } else if (counter.q[24:23] == 1) {
