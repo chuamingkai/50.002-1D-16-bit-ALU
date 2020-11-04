@@ -1,62 +1,24 @@
-//Do we need to include a counter, dff or edge_detector?
-//Not sure if the unfinished code is in the right format, if it is, then just will cont to harcode the rest。
-
-
 module alutester (
     input clk,  // clock 
     input rst,  // reset
     input start,
-    output error,
+    output error[3],
     output out[16],
-    output io_led [3][8]   // LEDs on IO Shield
-    //output io_seg[8],
-    //output io_sel[4],
-    //output opcode_led[6]
-  ) 
-  {//SIGNAL_AND_MODULE_INSTANCES
-  clk(clk) {
-    .rst(rst) {
+  ) {
+  .clk(clk), .rst(rst), .start(0)  {
+    addtester addtester;
+    booltester booltester;
+    comparetester comparetester;
+    factorialtester factorialtester;
+    multtester multtester;
+    shifttester shifttester;
+    subtester subtester;
+    
+    //fsm to run the main tester?
+  }
       
-       
-      fsm alustate = {START, ADD ....FAIL, PASSALL}; //edit in the states 
-      sixteen_bit_alu sixteenbitalu;
-      addtester add;
-      
-      
-      }}}
-      
-      always { //ALWAYS_STATEMENTS
-      
-      io_led[0][0:7]=0;
-      io_led[1][0:7]=0;
-      
-      sixteenbitalu.alufn=b000000;
-      sixteenbitalu.a=0;
-      sixteenbitalu.b=0;
-      sixteenbitalu.z=0;
-      sixteenbitalu.v=0;
-      sixteenbitalu.n=0;
-      sixteenbitalu.out=0;
-      sixteenbitalu.alu=16b0;
-      case (state.q){//read state
-        
-       alustate .START:
-        if (start == 1) {
-          alustate .d = alustate.ADD;
-        }
-        
-      //first test
-      alustate.ADD:
-      	io_led[0][0:7]=sixteenbitalu.out[0:7];
-      	io_led[1][0:7]=sixteenbitalu.out[8:15];
-        
-        if (add.error==0) {
-            alustate.d=alustate.SUB;
-            } else {
-              alustate.d = alustate.FAIL;
-            } 
-        
-      		
+  always {
+    //TODO: implement
 	
-}
+  }
 }
