@@ -27,13 +27,13 @@ always {
     
     
     if(b[15] == 0 && alufn[0] == 0){
-      xor_b = 1;
+      xor_b = 0;
     }else if(b[15] == 1 && alufn[0] == 0){
-      xor_b = 0;
-    }else if(b[15] == 0 && alufn[0] == 1){
-      xor_b = 0;
-    }else{
       xor_b = 1;
+    }else if(b[15] == 0 && alufn[0] == 1){
+      xor_b = 1;
+    }else{
+      xor_b = 0;
     }
     
     if(add_interim == 0){
