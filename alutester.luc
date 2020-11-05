@@ -8,7 +8,7 @@ module alutester (
   ) {
   sig error_signal;
   .clk(clk), .rst(rst) {
-    fsm maintester = {START, ADD, SUB, MULT, BOOL, COMPARE, SHIFT, FACTORIAL, MODULO, PASSALL, ERROR};
+    fsm maintester = {START, ADD, SUB, MULT, DIV, BOOL, COMPARE, SHIFT, FACTORIAL, MODULO, PASSALL, ERROR};
    
     addtester addtester;
     booltester booltester;
@@ -17,7 +17,8 @@ module alutester (
     multtester multtester;
     shifttester shifttester;
     subtester subtester;
-    modulotester modulotester;  
+    modulotester modulotester;
+    divtester divtester;  
   }
       
   always {
@@ -29,6 +30,7 @@ module alutester (
     shifttester.start = 0;
     subtester.start = 0;
     modulotester.start = 0;
+    divtester.start = 0;
     out = 0;
     error = 0;
     error_signal = 0;
@@ -67,6 +69,16 @@ module alutester (
           error_signal = d3;
           maintester.d = maintester.ERROR;
         } else if (multtester.cmplt == 1) {
+          maintester.d = maintester.DIV;
+        }
+        
+      maintester.DIV:
+        divtester.start = 1;
+        out = divtester.out;
+        if (divtester.error == 1) {
+          error_signal = d4;
+          maintester.d = maintester.ERROR;
+        } else if (divtester.cmplt == 1) {
           maintester.d = maintester.BOOL;
         }
         
@@ -74,7 +86,7 @@ module alutester (
         booltester.start = 1;
         out = booltester.out;
         if (booltester.error == 1) {
-          error_signal = d4;
+          error_signal = d5;
           maintester.d = maintester.ERROR;
         } else if (booltester.cmplt == 1) {
           maintester.d = maintester.COMPARE;
@@ -84,7 +96,7 @@ module alutester (
         comparetester.start = 1;
         out = comparetester.out;
         if (comparetester.error == 1) {
-          error_signal = d5;
+          error_signal = d6;
           maintester.d = maintester.ERROR;
         } else if (comparetester.cmplt == 1) {
           maintester.d = maintester.SHIFT;
@@ -94,7 +106,7 @@ module alutester (
         shifttester.start = 1;
         out = shifttester.out;
         if (shifttester.error == 1) {
-          error_signal = d6;
+          error_signal = d7;
           maintester.d = maintester.ERROR;
         } else if (shifttester.cmplt == 1) {
           maintester.d = maintester.FACTORIAL;
@@ -104,7 +116,7 @@ module alutester (
         factorialtester.start = 1;
         out = factorialtester.out;
         if (factorialtester.error == 1) {
-          error_signal = d7;
+          error_signal = d8;
           maintester.d = maintester.ERROR;
         } else if (factorialtester.cmplt == 1) {
           maintester.d = maintester.MODULO;
@@ -114,7 +126,7 @@ module alutester (
         modulotester.start = 1;
         out = modulotester.out;
         if (modulotester.error == 1) {
-          error_signal = d8;
+          error_signal = d9;
           maintester.d = maintester.ERROR;
         } else if (modulotester.cmplt == 1) {
           maintester.d = maintester.PASSALL;
