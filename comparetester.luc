@@ -183,7 +183,7 @@ module comparetester (
         } else if (counter.q[29:28] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[29:28] == 3) {
-            if (sixteenbitalu.alu == 0000000000000000 ) {
+            if (sixteenbitalu.alu == 0000000000000001 ) {
               counter.d = 0; // reset counter for next test
               comparetesterstate.d = comparetesterstate.PASSALL;
             } else {
