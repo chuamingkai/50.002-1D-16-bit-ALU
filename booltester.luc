@@ -11,8 +11,10 @@ module booltester (
   .clk(clk), .rst(rst)  {
     fsm boolteststate = {START, AND, OR, A, XOR,FAIL,PASSALL}; //able to test for 00,01, 10 and 11 combinations for each test since operations are bitwise
     dff counter[25];
-    sixteen_bit_alu sixteenbitalu;
+    
   }
+  
+  sixteen_bit_alu sixteenbitalu;
     
   
   const BOOLA = b0000111111111111;
@@ -83,7 +85,7 @@ module booltester (
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
-            if (sixteenbitalu.alu ==   b1111000000001111 ){
+            if (sixteenbitalu.alu == b0000111111111111){
               counter.d = 0; // reset counter for next test
               boolteststate.d = boolteststate.XOR;
             } else {
