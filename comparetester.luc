@@ -3,14 +3,12 @@ module comparetester (
     input rst,  // reset
     input start, //initiate tester
     output out[16], // output to flash on fpga; connect to FPGA led
-    output error //show pass or fail
-    //output io_seg[8],
-    //output io_sel[4],
-    //output opcode_led[6]
+    output error, //show pass or fail
+    output cmplt
   ) {
   .clk(clk), .rst(rst)  {
     fsm comparetesterstate = {START, EQUALTRUE, EQUALFALSE, LESSOVER, LESSNO, LESSFALSE, LESSCOMPARE, LESSTHANOREQUAL,LESSTHANOREQUALCOMPARE,PASSALL, FAIL}; //call the states by name.state
-    dff counter[25];
+    dff counter[30];
     sixteen_bit_alu sixteenbitalu;
   }
     
@@ -28,10 +26,8 @@ module comparetester (
     sixteenbitalu.alufn=b110011;
     sixteenbitalu.a=0;
     sixteenbitalu.b=0;
-    //compareunit.z=0; //compareunit values are connected to the adder 
-    //compareunit.v=0;
-    //compareunit.n=0;
     error = 0;
+    cmplt = 0;
     out = 0;
     case (comparetesterstate.q) {//read state
     
@@ -64,14 +60,13 @@ module comparetester (
       comparetesterstate.EQUALFALSE:
         sixteenbitalu.a = COMPAREA;
         sixteenbitalu.b = COMPAREB;
-	//compareunit.z =0;
-        if (counter.q[24:23] == 0) {
+        if (counter.q[29:28] == 0) {
             out = COMPAREA;
-        } else if (counter.q[24:23] == 1) {
+        } else if (counter.q[29:28] == 1) {
             out = COMPAREB; 
-        } else if (counter.q[24:23] == 2) {
+        } else if (counter.q[29:28] == 2) {
             out = sixteenbitalu.alu;
-        } else if (counter.q[24:23] == 3) {
+        } else if (counter.q[29:28] == 3) {
             if (sixteenbitalu.alu == 0000000000000000) {
               counter.d = 0; // reset counter for next test
               comparetesterstate.d = comparetesterstate.LESSOVER;
@@ -80,19 +75,17 @@ module comparetester (
             } 
         }
 	//more negative number subtract negative number 1111111111111101-1111111111111111 =0000000000000010
-	comparetesterstate.LESSOVER:
+	      comparetesterstate.LESSOVER:
         sixteenbitalu.a = COMPAREC;
         sixteenbitalu.b = COMPARED;
-	//compareunit.v = 1;
-	//compareunit.n = 0;
-	sixteenbitalu.alufn=b110101;
-        if (counter.q[24:23] == 0) {
+	        sixteenbitalu.alufn=b110101;
+        if (counter.q[29:28] == 0) {
             out = COMPAREC;
-        } else if (counter.q[24:23] == 1) {
+        } else if (counter.q[29:28] == 1) {
             out = COMPARED; 
-        } else if (counter.q[24:23] == 2) {
+        } else if (counter.q[29:28] == 2) {
             out = sixteenbitalu.alu;
-        } else if (counter.q[24:23] == 3) {
+        } else if (counter.q[29:28] == 3) {
             if (sixteenbitalu.alu == 0000000000000001) {
               counter.d = 0; // reset counter for next test
               comparetesterstate.d = comparetesterstate.LESSNO;
@@ -101,19 +94,17 @@ module comparetester (
             } 
         }
 	
-	comparetesterstate.LESSNO:
+	      comparetesterstate.LESSNO:
         sixteenbitalu.a = COMPAREE;
         sixteenbitalu.b = COMPAREF;
-	//compareunit.v =0;
-	//compareunit.n =1;
-	sixteenbitalu.alufn=b110101;
-        if (counter.q[24:23] == 0) {
+        sixteenbitalu.alufn=b110101;
+        if (counter.q[29:28] == 0) {
             out = COMPAREE;
-        } else if (counter.q[24:23] == 1) {
+        } else if (counter.q[29:28] == 1) {
             out = COMPAREF; 
-        } else if (counter.q[24:23] == 2) {
+        } else if (counter.q[29:28] == 2) {
             out = sixteenbitalu.alu;
-        } else if (counter.q[24:23] == 3) {
+        } else if (counter.q[29:28] == 3) {
             if (sixteenbitalu.alu == 0000000000000001) {
               counter.d = 0; // reset counter for next test
               comparetesterstate.d = comparetesterstate.LESSFALSE;
@@ -122,19 +113,17 @@ module comparetester (
             } 
         }
 	
-	comparetesterstate.LESSFALSE:
+	      comparetesterstate.LESSFALSE:
         sixteenbitalu.a = COMPAREF;
         sixteenbitalu.b = COMPAREE;
-	//compareunit.v =0;
-	//compareunit.n =0;
-	sixteenbitalu.alufn=b110101;
-        if (counter.q[24:23] == 0) {
+	        sixteenbitalu.alufn=b110101;
+        if (counter.q[29:28] == 0) {
             out = COMPAREF;
-        } else if (counter.q[24:23] == 1) {
+        } else if (counter.q[29:28] == 1) {
             out = COMPAREE; 
-        } else if (counter.q[24:23] == 2) {
+        } else if (counter.q[29:28] == 2) {
             out = sixteenbitalu.alu;
-        } else if (counter.q[24:23] == 3) {
+        } else if (counter.q[29:28] == 3) {
             if (sixteenbitalu.alu == 0000000000000000) {
               counter.d = 0; // reset counter for next test
               comparetesterstate.d = comparetesterstate.LESSCOMPARE;
@@ -143,19 +132,17 @@ module comparetester (
             } 
         }
 	
-	comparetesterstate.LESSCOMPARE:
+	      comparetesterstate.LESSCOMPARE:
         sixteenbitalu.a = COMPAREF;
         sixteenbitalu.b = COMPAREF;
-	//compareunit.v =0;
-	//compareunit.n =0;
-	sixteenbitalu.alufn=b110101;
-        if (counter.q[24:23] == 0) {
+	        sixteenbitalu.alufn=b110101;
+        if (counter.q[29:28] == 0) {
             out = COMPAREF;
-        } else if (counter.q[24:23] == 1) {
+        } else if (counter.q[29:28] == 1) {
             out = COMPAREF; 
-        } else if (counter.q[24:23] == 2) {
+        } else if (counter.q[29:28] == 2) {
             out = sixteenbitalu.alu;
-        } else if (counter.q[24:23] == 3) {
+        } else if (counter.q[29:28] == 3) {
             if (sixteenbitalu.alu == 0000000000000000 && sixteenbitalu.v == 0 && sixteenbitalu.n == 0) {
               counter.d = 0; // reset counter for next test
               comparetesterstate.d = comparetesterstate.LESSTHANOREQUAL;
@@ -165,20 +152,17 @@ module comparetester (
         }
 	
 	
-	comparetesterstate.LESSTHANOREQUAL:
+	      comparetesterstate.LESSTHANOREQUAL:
         sixteenbitalu.a = COMPAREE;
         sixteenbitalu.b = COMPAREF;
-	//compareunit.n =1;
-	//compareunit.v =0;
-	//compareunit.z =0;
-	sixteenbitalu.alufn=b110111;
-        if (counter.q[24:23] == 0) {
+        sixteenbitalu.alufn=b110111;
+        if (counter.q[29:28] == 0) {
             out = COMPAREE;
-        } else if (counter.q[24:23] == 1) {
+        } else if (counter.q[29:28] == 1) {
             out = COMPAREF; 
-        } else if (counter.q[24:23] == 2) {
+        } else if (counter.q[29:28] == 2) {
             out = sixteenbitalu.alu;
-        } else if (counter.q[24:23] == 3) {
+        } else if (counter.q[29:28] == 3) {
             if (sixteenbitalu.alu == 0000000000000001) {
               counter.d = 0; // reset counter for next test
               comparetesterstate.d = comparetesterstate.LESSTHANOREQUALCOMPARE;
@@ -188,35 +172,31 @@ module comparetester (
         }
 	
 	
-	comparetesterstate.LESSTHANOREQUALCOMPARE:
+	      comparetesterstate.LESSTHANOREQUALCOMPARE:
         sixteenbitalu.a = COMPAREF;
         sixteenbitalu.b = COMPAREF;
-	//compareunit.v =0;
-	//compareunit.n =0;
-	//compareunit.z =1;
-	sixteenbitalu.alufn=b110111;
-        if (counter.q[24:23] == 0) {
+        sixteenbitalu.alufn=b110111;
+        if (counter.q[29:28] == 0) {
             out = COMPAREF;
-        } else if (counter.q[24:23] == 1) {
+        } else if (counter.q[29:28] == 1) {
             out = COMPAREF; 
-        } else if (counter.q[24:23] == 2) {
+        } else if (counter.q[29:28] == 2) {
             out = sixteenbitalu.alu;
-        } else if (counter.q[24:23] == 3) {
+        } else if (counter.q[29:28] == 3) {
             if (sixteenbitalu.alu == 0000000000000000 ) {
               counter.d = 0; // reset counter for next test
               comparetesterstate.d = comparetesterstate.PASSALL;
             } else {
               comparetesterstate.d = comparetesterstate.FAIL;
             } 
-        }
-	
-	
-	
+        }	
       
       comparetesterstate.PASSALL:
+        cmplt = 1;
         error = 0;
       
       comparetesterstate.FAIL:
+        cmplt = 1;
         error = 1;      		
 	  }
 

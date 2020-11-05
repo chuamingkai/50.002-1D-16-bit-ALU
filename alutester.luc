@@ -4,21 +4,119 @@ module alutester (
     input start,
     output error[3],
     output out[16],
+    output cmplt
   ) {
-  .clk(clk), .rst(rst), .start(0)  {
+  sig error_signal;
+  .clk(clk), .rst(rst) {
+    fsm maintester = {START, ADD, SUB, MULT, BOOL, COMPARE, SHIFT, FACTORIAL, PASSALL, ERROR};
+   
     addtester addtester;
     booltester booltester;
     comparetester comparetester;
     factorialtester factorialtester;
     multtester multtester;
     shifttester shifttester;
-    subtester subtester;
-    
-    //fsm to run the main tester?
+    subtester subtester;  
   }
       
   always {
-    //TODO: implement
+    addtester.start = 0;
+    booltester.start = 0;
+    comparetester.start = 0;
+    factorialtester.start = 0;
+    multtester.start = 0;
+    shifttester.start = 0;
+    subtester.start = 0;
+    out = 0;
+    error = 0;
+    error_signal = 0;
+    cmplt = 0;
+    
+    case (maintester.q) {
+      maintester.START:
+        if (start == 1) {
+          maintester.d = maintester.ADD;
+        }
+        
+      maintester.ADD: 
+        addtester.start = 1;
+        out = addtester.out;
+        if (addtester.error == 1) {
+          error_signal = d1;
+          maintester.d = maintester.ERROR;
+        } else if (addtester.cmplt == 1) {
+          maintester.d = maintester.SUB;
+        }
+        
+      maintester.SUB: 
+        subtester.start = 1;
+        out = subtester.out;
+        if (subtester.error == 1) {
+          error_signal = d2;
+          maintester.d = maintester.ERROR;
+        } else if (subtester.cmplt == 1) {
+          maintester.d = maintester.MULT;
+        }
+      
+      maintester.MULT: 
+        multtester.start = 1;
+        out = multtester.out;
+        if (multtester.error == 1) {
+          error_signal = d3;
+          maintester.d = maintester.ERROR;
+        } else if (multtester.cmplt == 1) {
+          maintester.d = maintester.BOOL;
+        }
+        
+      maintester.BOOL: 
+        booltester.start = 1;
+        out = booltester.out;
+        if (booltester.error == 1) {
+          error_signal = d4;
+          maintester.d = maintester.ERROR;
+        } else if (booltester.cmplt == 1) {
+          maintester.d = maintester.COMPARE;
+        }
+        
+      maintester.COMPARE: 
+        comparetester.start = 1;
+        out = comparetester.out;
+        if (comparetester.error == 1) {
+          error_signal = d5;
+          maintester.d = maintester.ERROR;
+        } else if (comparetester.cmplt == 1) {
+          maintester.d = maintester.SHIFT;
+        }
+        
+      maintester.SHIFT: 
+        shifttester.start = 1;
+        out = shifttester.out;
+        if (shifttester.error == 1) {
+          error_signal = d6;
+          maintester.d = maintester.ERROR;
+        } else if (shifttester.cmplt == 1) {
+          maintester.d = maintester.FACTORIAL;
+        }
+        
+      maintester.FACTORIAL: 
+        factorialtester.start = 1;
+        out = factorialtester.out;
+        if (factorialtester.error == 1) {
+          error_signal = d7;
+          maintester.d = maintester.ERROR;
+        } else if (factorialtester.cmplt == 1) {
+          maintester.d = maintester.PASSALL;
+        }
+        
+      maintester.PASSALL:
+        error = 0;
+        cmplt = 1;
+        
+      maintester.ERROR:
+        error = error_signal;
+        cmplt = 0;
+      
+      }
 	
   }
 }
