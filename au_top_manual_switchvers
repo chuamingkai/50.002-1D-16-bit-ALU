@@ -1,0 +1,83 @@
+//dk if I connected the stuff correctly, 
+//idea is the leftmost 2 switches control the states of GETA, GETB, GETALUFN and RETURN 
+// the 2 16 bit inputs and 6 bit opcode are still using the rightmost 2 set of 8 switches
+
+
+module au_top (
+    input clk,              // 100MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    input usb_rx,           // USB->Serial input
+    output usb_tx,          // USB->Serial output
+    output io_led [3][8],   // LEDs on IO Shield
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [4],      // Digit select on IO Shield
+    input io_button [5],    // 5 buttons on IO Shield
+    input io_dip [3][8]    // DIP switches on IO Shield
+    
+  ) {
+  sig state[2];
+  sig rst;                  // reset signal
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+    //button_conditioner buttoncond;
+    //edge_detector button_detector(#RISE(1), #FALL(0));
+    .rst(rst) {
+      fsm manualAlu = {GETA, GETB, GETALUFN, RETURN};
+      sixteen_bit_alu sixteenbitalu;
+      dff a[16]; //store a input from io_dip
+      dff b[16]; //store b input from io_dip
+      dff alufn[6]; //store alufn input from io_dip
+    }
+  }
+  
+  always {
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;
+    
+    usb_tx = usb_rx;        // loop serial port
+     
+    led = 8h00;             // turn LEDs off
+    io_led[2][7:6] = io_dip[2][7:6];
+    io_led[2][5:0]= 6b0;
+    io_led[1:0] = 2x{{8h00}};
+    io_seg = 8hff;          // turn segments off
+    io_sel = 4hf;
+    state= io_dip[2][7:6];
+    
+    //buttoncond.in = io_button[4]; // right button used to indicate done with setting io_dips
+    //button_detector.in = buttoncond.out;
+    // a.d = a.q;
+    //b.d = b.q;
+    alufn.d = alufn.q;
+    sixteenbitalu.a = a.q;
+    sixteenbitalu.b = b.q;
+    sixteenbitalu.alufn = alufn.q;
+    
+    case (manualAlu.q) {
+      manualAlu.GETA:
+        a.d = $flatten(io_dip[1:0]);
+        if (state==2b01) {
+          manualAlu.d = manualAlu.GETB;
+        }
+        
+      manualAlu.GETB:
+        b.d = $flatten(io_dip[1:0]);
+        if (state==2b10) {
+          manualAlu.d = manualAlu.GETALUFN;
+        }
+        
+      manualAlu.GETALUFN:
+        alufn.d = io_dip[0][5:0];
+        if (2b11) {
+          manualAlu.d = manualAlu.RETURN;
+        }
+        
+      manualAlu.RETURN:
+        io_led[1:0] = $build(sixteenbitalu.alu, 2);
+      
+    }    
+  }
+}
