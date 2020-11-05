@@ -3,18 +3,15 @@ module modulotester (
     input rst,  // reset
     input start, //initiate tester
     output out[16], // output to flash on fpga; connect to FPGA led
-    output error //show pass or fail
-    //output io_seg[8],
-    //output io_sel[4],
-    //output opcode_led[6]
+    output error, //show pass or fail
+    output cmplt
   ) {
   
   .clk(clk), .rst(rst)  {
     fsm modulotesterstate = {START, MODULOONE, MODULOSELF, MODULOTWO, MODULOFIVE,PASSALL, FAIL}; //call the states by name.state
-    dff counter[25];
-    
-  }
+    dff counter[30];
     sixteen_bit_alu sixteenbitalu;
+  }
   
   const ADDA = b0111111111111111;
   const ADDB = b0000000000001000;
@@ -27,6 +24,7 @@ module modulotester (
     sixteenbitalu.a=0;
     sixteenbitalu.b=0;
     error = 0;
+    cmplt = 0;
     out = 0;
     case (addteststate.q) {//read state
     
@@ -110,9 +108,11 @@ module modulotester (
         }
       
       modulotesterstate.PASSALL:
+      	cmplt = 1;
         error = 0;
       
       modulotesterstate.FAIL:
+      	cmplt = 1;
         error = 1;      		
 	  }
         
