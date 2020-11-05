@@ -32,7 +32,7 @@ module divtester (
     
       divtesterstate.START:
         if (start == 1) {
-	  counter.d = 0; // reset counter
+          counter.d = 0; // reset counter
           divtesterstate.d = divtesterstate.INT1;
         }
         
@@ -41,9 +41,9 @@ module divtester (
         sixteenbitalu.a = DIVA;
         sixteenbitalu.b = DIVB;
         if (counter.q[29:28] == 0) {
-          out = ADDA;
+          out = DIVA;
         } else if (counter.q[29:28] == 1) {
-          out = b0000000000000001; 
+          out = DIVB; 
         } else if (counter.q[29:28] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[29:28] == 3) {
@@ -54,13 +54,13 @@ module divtester (
               divtesterstate.d = divtesterstate.FAIL;
             } 
         }
-          divtesterstate.INT2:
+      divtesterstate.INT2:
         sixteenbitalu.a = DIVC;
         sixteenbitalu.b = DIVD;
         if (counter.q[29:28] == 0) {
-          out = ADDA;
+          out = DIVC;
         } else if (counter.q[29:28] == 1) {
-          out = ADDA; 
+          out = DIVD; 
         } else if (counter.q[29:28] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[29:28] == 3) {
@@ -72,13 +72,13 @@ module divtester (
             } 
         }
         
-         divtesterstate.FLOOR1:
+      divtesterstate.FLOOR1:
         sixteenbitalu.a = DIVE;
         sixteenbitalu.b = DIVD;
         if (counter.q[29:28] == 0) {
-          out = ADDA;
+          out = DIVE;
         } else if (counter.q[29:28] == 1) {
-          out = ADDA; 
+          out = DIVD; 
         } else if (counter.q[29:28] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[29:28] == 3) {
@@ -91,13 +91,13 @@ module divtester (
         }
           
      
-        divtesterstate.FLOOR2:
+      divtesterstate.FLOOR2:
         sixteenbitalu.a = DIVB;
         sixteenbitalu.b = DIVA;
         if (counter.q[29:28] == 0) {
-          out = ADDA;
+          out = DIVB;
         } else if (counter.q[29:28] == 1) {
-          out = ADDA; 
+          out = DIVA; 
         } else if (counter.q[29:28] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[29:28] == 3) {
