@@ -97,7 +97,7 @@ Using the 2 values:
 
 1. AND: b0000000000001111
 2. OR:  b0000111111111111 
-3. A:   b1111000000001111 
+3. A:   b0000111111111111 (get the same output from the input)
 4. XOR: b0000111111110000 
 
 
