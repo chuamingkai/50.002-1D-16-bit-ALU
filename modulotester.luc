@@ -1,0 +1,122 @@
+module modulotester (
+    input clk,  // clock 
+    input rst,  // reset
+    input start, //initiate tester
+    output out[16], // output to flash on fpga; connect to FPGA led
+    output error //show pass or fail
+    //output io_seg[8],
+    //output io_sel[4],
+    //output opcode_led[6]
+  ) {
+  
+  .clk(clk), .rst(rst)  {
+    fsm modulotesterstate = {START, MODULOONE, MODULOSELF, MODULOTWO, MODULOFIVE,PASSALL, FAIL}; //call the states by name.state
+    dff counter[25];
+    
+  }
+    sixteen_bit_alu sixteenbitalu;
+  
+  const ADDA = b0111111111111111;
+  const ADDB = b0000000000001000;
+  //const ADDC = b0000000000000010;
+  const ADDD = b0000000000000101;
+    
+  always {
+    counter.d = counter.q + 1;
+    sixteenbitalu.alufn=b000111 ;
+    sixteenbitalu.a=0;
+    sixteenbitalu.b=0;
+    error = 0;
+    out = 0;
+    case (addteststate.q) {//read state
+    
+      addteststate.START:
+        if (start == 1) {
+	  counter.d = 0; // reset counter
+          addteststate.d = addteststate.MODULOONE;
+        }
+        
+      //first test
+      modulotesterstate.MODULOONE:
+        sixteenbitalu.a = ADDA;
+        sixteenbitalu.b = b0000000000000001;
+        if (counter.q[29:28] == 0) {
+          out = ADDA;
+        } else if (counter.q[29:28] == 1) {
+          out = b0000000000000001; 
+        } else if (counter.q[29:28] == 2) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[29:28] == 3) {
+            if(sixteenbitalu.alu == b0000000000000000) {
+              counter.d = 0; // reset counter for next test
+              modulotesterstate.d = modulotesterstate.MODULOSELF; //next state if the test is passed 
+            } else {
+              modulotesterstate.d = modulotesterstate.FAIL;
+            } 
+        }
+          modulotesterstate.MODULOSELF:
+        sixteenbitalu.a = ADDA;
+        sixteenbitalu.b = ADDA;
+        if (counter.q[29:28] == 0) {
+          out = ADDA;
+        } else if (counter.q[29:28] == 1) {
+          out = ADDA; 
+        } else if (counter.q[29:28] == 2) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[29:28] == 3) {
+            if(sixteenbitalu.alu == b0000000000000000) {
+              counter.d = 0; // reset counter for next test
+              modulotesterstate.d = modulotesterstate.MODULOTWO; //next state if the test is passed 
+            } else {
+              modulotesterstate.d = modulotesterstate.FAIL;
+            } 
+        }
+        
+         modulotesterstate.MODULOTWO:
+        sixteenbitalu.a = ADDD;
+        sixteenbitalu.b = b0000000000000010;
+        if (counter.q[29:28] == 0) {
+          out = ADDA;
+        } else if (counter.q[29:28] == 1) {
+          out = ADDA; 
+        } else if (counter.q[29:28] == 2) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[29:28] == 3) {
+            if(sixteenbitalu.alu == b0000000000000001) {
+              counter.d = 0; // reset counter for next test
+              modulotesterstate.d = modulotesterstate.MODULOFIVE; //next state if the test is passed 
+            } else {
+              modulotesterstate.d = modulotesterstate.FAIL;
+            } 
+        }
+          
+     
+         modulotesterstate.MODULOFIVE:
+        sixteenbitalu.a = ADDB;
+        sixteenbitalu.b = b0000000000000101;
+        if (counter.q[29:28] == 0) {
+          out = ADDA;
+        } else if (counter.q[29:28] == 1) {
+          out = ADDA; 
+        } else if (counter.q[29:28] == 2) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[29:28] == 3) {
+            if(sixteenbitalu.alu == b0000000000000011) {
+              counter.d = 0; // reset counter for next test
+              modulotesterstate.d = modulotesterstate.PASSALL; //next state if the test is passed 
+            } else {
+              modulotesterstate.d = modulotesterstate.FAIL;
+            } 
+        }
+      
+      modulotesterstate.PASSALL:
+        error = 0;
+      
+      modulotesterstate.FAIL:
+        error = 1;      		
+	  }
+        
+          
+      
+	  }
+}
