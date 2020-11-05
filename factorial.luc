@@ -5,21 +5,20 @@ module factorial (
     output out
   ) {
   
-  sig trans_out; //transient out; keep track of factorial value
-
   .clk(clk), .rst(rst) {
     fsm factorialState = {START, COUNTING, FINISH};
     dff counter[16];
+    dff trans_out[32];
   }
   
   always {
-    trans_out = 0;
+    trans_out.d = trans_out.q;
     out = 0;
-    counter.d = 0;
+    counter.d = counter.q;
     
     case (factorialState.q) {
       factorialState.START:
-        trans_out = 1;
+        trans_out.d = 1;
         counter.d = 1;
         if ($unsigned(in) == 0) {
           factorialState.d = factorialState.FINISH;
@@ -28,7 +27,7 @@ module factorial (
         }
         
       factorialState.COUNTING:
-        trans_out = trans_out * counter.q;
+        trans_out.d = trans_out.q * counter.q;
         if (counter.q == $unsigned(in)) {
           factorialState.d = factorialState.FINISH;
         } else {
@@ -37,7 +36,7 @@ module factorial (
         
       factorialState.FINISH:
         counter.d = counter.q;
-        out = trans_out;        
+        out = trans_out.q;        
         
   }
 }
