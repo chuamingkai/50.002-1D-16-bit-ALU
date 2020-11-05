@@ -11,8 +11,9 @@ module shifttester (
   .clk(clk), .rst(rst)  {
     fsm shifttesterstate = {START, SR8, SR1, SL15, SSR4, SSR10, PASSALL, FAIL}; 
     dff counter[25];
-    sixteen_bit_alu sixteenbitalu;
+    
   }
+  sixteen_bit_alu sixteenbitalu;
     
 
   const B1 = b0000000000000001;
