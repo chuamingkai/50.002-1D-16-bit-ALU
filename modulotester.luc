@@ -26,12 +26,12 @@ module modulotester (
     error = 0;
     cmplt = 0;
     out = 0;
-    case (addteststate.q) {//read state
+    case (modulotesterstate.q) {//read state
     
-      addteststate.START:
+      modulotesterstate.START:
         if (start == 1) {
 	  counter.d = 0; // reset counter
-          addteststate.d = addteststate.MODULOONE;
+          modulotesterstate.d = modulotesterstate.MODULOONE;
         }
         
       //first test
@@ -89,7 +89,7 @@ module modulotester (
         }
           
      
-         modulotesterstate.MODULOFIVE:
+        modulotesterstate.MODULOFIVE:
         sixteenbitalu.a = ADDB;
         sixteenbitalu.b = b0000000000000101;
         if (counter.q[29:28] == 0) {
@@ -108,11 +108,11 @@ module modulotester (
         }
       
       modulotesterstate.PASSALL:
-      	cmplt = 1;
+        cmplt = 1;
         error = 0;
       
       modulotesterstate.FAIL:
-      	cmplt = 1;
+        cmplt = 1;
         error = 1;      		
 	  }
         
