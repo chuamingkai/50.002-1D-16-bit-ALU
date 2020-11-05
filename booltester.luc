@@ -76,7 +76,7 @@ module booltester (
 	
 	 boolteststate.A:
         sixteenbitalu.a = BOOLA;
-        sixteenbitalu.b = BOOLB;
+        //sixteenbitalu.b = BOOLB;
         sixteenbitalu.alufn=b011010;
         if (counter.q[24:23] == 0) {
             out = BOOLA;
