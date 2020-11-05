@@ -10,9 +10,14 @@ The core functions and  corresponding testers include:
 5. Multiplier
 
 The additional functions and their testers include:
-1. Modulo
-2. Factorial
-3. Divider (the divider function is nested within the alu module)
+1. Divider
+2. Modulo 
+(the above two functions are nested within the adder module)
+3. Factorial
+
+Test Cases:
+Account for the different operations (different opcode) and for the different cases of arithmetic with known values.
+Recorded under TestCasesNote.txt
 
 
 Contributing:
