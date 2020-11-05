@@ -1,0 +1,124 @@
+module divtester (
+    input clk,  // clock 
+    input rst,  // reset
+    input start, //initiate tester
+    output out[16], // output to flash on fpga; connect to FPGA led
+    output error, //show pass or fail
+    output cmplt
+  ) {
+  
+  .clk(clk), .rst(rst)  {
+    fsm divtesterstate = {START, INT1, INT2, FLOOR1, FLOOR2,PASSALL, FAIL}; //call the states by name.state
+    dff counter[30];
+    sixteen_bit_alu sixteenbitalu;
+  }
+  
+  const DIVA = b0000000000001000;//8
+  const DIVB = b0000000000000010;//2
+  const DIVC = b0000000000001001;//9
+  const DIVD = b0000000000000011;//3
+  const DIVE = b0000000000001101;//13
+  
+    
+  always {
+    counter.d = counter.q + 1;
+    sixteenbitalu.alufn=b000011  ;
+    sixteenbitalu.a=0;
+    sixteenbitalu.b=0;
+    error = 0;
+    cmplt = 0;
+    out = 0;
+    case (divtesterstate.q) {//read state
+    
+      divtesterstate.START:
+        if (start == 1) {
+	  counter.d = 0; // reset counter
+          divtesterstate.d = divtesterstate.INT1;
+        }
+        
+      //first test
+      divtesterstate.INT1:
+        sixteenbitalu.a = DIVA;
+        sixteenbitalu.b = DIVB;
+        if (counter.q[29:28] == 0) {
+          out = ADDA;
+        } else if (counter.q[29:28] == 1) {
+          out = b0000000000000001; 
+        } else if (counter.q[29:28] == 2) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[29:28] == 3) {
+            if(sixteenbitalu.alu == b0000000000000100) {
+              counter.d = 0; // reset counter for next test
+              divtesterstate.d = divtesterstate.INT2; //next state if the test is passed 
+            } else {
+              divtesterstate.d = divtesterstate.FAIL;
+            } 
+        }
+          divtesterstate.INT2:
+        sixteenbitalu.a = DIVC;
+        sixteenbitalu.b = DIVD;
+        if (counter.q[29:28] == 0) {
+          out = ADDA;
+        } else if (counter.q[29:28] == 1) {
+          out = ADDA; 
+        } else if (counter.q[29:28] == 2) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[29:28] == 3) {
+            if(sixteenbitalu.alu == b0000000000000011) {
+              counter.d = 0; // reset counter for next test
+              divtesterstate.d = divtesterstate.FLOOR1; //next state if the test is passed 
+            } else {
+              divtesterstate.d = divtesterstate.FAIL;
+            } 
+        }
+        
+         divtesterstate.FLOOR1:
+        sixteenbitalu.a = DIVE;
+        sixteenbitalu.b = DIVD;
+        if (counter.q[29:28] == 0) {
+          out = ADDA;
+        } else if (counter.q[29:28] == 1) {
+          out = ADDA; 
+        } else if (counter.q[29:28] == 2) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[29:28] == 3) {
+            if(sixteenbitalu.alu == b0000000000000100) {
+              counter.d = 0; // reset counter for next test
+              divtesterstate.d = divtesterstate.FLOOR2; //next state if the test is passed 
+            } else {
+              divtesterstate.d = divtesterstate.FAIL;
+            } 
+        }
+          
+     
+        divtesterstate.FLOOR2:
+        sixteenbitalu.a = DIVB;
+        sixteenbitalu.b = DIVA;
+        if (counter.q[29:28] == 0) {
+          out = ADDA;
+        } else if (counter.q[29:28] == 1) {
+          out = ADDA; 
+        } else if (counter.q[29:28] == 2) {
+          out = sixteenbitalu.alu;
+        } else if (counter.q[29:28] == 3) {
+            if(sixteenbitalu.alu == b0000000000000000) {
+              counter.d = 0; // reset counter for next test
+              divtesterstate.d = divtesterstate.PASSALL; //next state if the test is passed 
+            } else {
+              divtesterstate.d = divtesterstate.FAIL;
+            } 
+        }
+      
+      divtesterstate.PASSALL:
+        cmplt = 1;
+        error = 0;
+      
+      divtesterstate.FAIL:
+        cmplt = 1;
+        error = 1;      		
+	  }
+        
+          
+      
+	  }
+}
