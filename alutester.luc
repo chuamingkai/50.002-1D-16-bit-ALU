@@ -138,7 +138,7 @@ module alutester (
         
       maintester.ERROR:
         error = error_signal;
-        cmplt = 0;
+        cmplt = 1;
       
       }
 	
