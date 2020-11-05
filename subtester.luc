@@ -66,7 +66,7 @@ module subtester (
         } else if (counter.q[29:28] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[29:28] == 3) {
-            if (sixteenbitalu.alu == b1111111111111111 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 1) {
+            if (sixteenbitalu.alu == b1111111111111101 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 1) {
               counter.d = 0; // reset counter for next test
               subtesterstate.d = subtesterstate.SUBZ;
             } else {
