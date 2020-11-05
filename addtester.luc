@@ -8,12 +8,13 @@ module addtester (
     //output io_sel[4],
     //output opcode_led[6]
   ) {
+  
   .clk(clk), .rst(rst)  {
     fsm addteststate = {START, ADDOVER, ADDNO, PASSALL, FAIL}; //call the states by name.state
     dff counter[25];
-    sixteen_bit_alu sixteenbitalu;
-  }
     
+  }
+    sixteen_bit_alu sixteenbitalu;
   
   const ADDA = b0111111111111111;
   const ADDB = b0000000000000001;
@@ -64,7 +65,7 @@ module addtester (
         } else if (counter.q[24:23] == 2) {
             out = sixteenbitalu.alu;
         } else if (counter.q[24:23] == 3) {
-            if (sixteenbitalu.alu == 0000000000000111 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 0) {
+            if (sixteenbitalu.alu == b0000000000000111 && sixteenbitalu.v == 0 && sixteenbitalu.z == 0 && sixteenbitalu.n == 0) {
               counter.d = 0; // reset counter for next test
               addteststate.d = addteststate.PASSALL;
             } else {
@@ -78,5 +79,8 @@ module addtester (
       addteststate.FAIL:
         error = 1;      		
 	  }
-
+        
+          
+      
+	  }
 }
