@@ -38,7 +38,7 @@ module sixteen_bit_alu (
       b00:
         // perform add operation
         alu = sixteenbitadder.sum;
-        if (alufn[2] == b1) {
+        if (alufn[2:0] == b110) {
           alu = factorial.out;
         }
       
