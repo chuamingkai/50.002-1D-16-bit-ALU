@@ -74,9 +74,9 @@ module modulotester (
         sixteenbitalu.a = ADDD;
         sixteenbitalu.b = b0000000000000010;
         if (counter.q[29:28] == 0) {
-          out = ADDA;
+          out = ADDD;
         } else if (counter.q[29:28] == 1) {
-          out = ADDA; 
+          out = b0000000000000010; 
         } else if (counter.q[29:28] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[29:28] == 3) {
@@ -93,9 +93,9 @@ module modulotester (
         sixteenbitalu.a = ADDB;
         sixteenbitalu.b = b0000000000000101;
         if (counter.q[29:28] == 0) {
-          out = ADDA;
+          out = ADDB;
         } else if (counter.q[29:28] == 1) {
-          out = ADDA; 
+          out = b0000000000000101; 
         } else if (counter.q[29:28] == 2) {
           out = sixteenbitalu.alu;
         } else if (counter.q[29:28] == 3) {
