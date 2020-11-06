@@ -71,7 +71,7 @@ module au_top (
         
       manualAlu.GETALUFN:
         alufn.d = io_dip[0][5:0];
-        if (2b11) {
+        if (state==2b11) {
           manualAlu.d = manualAlu.RETURN;
         }
         
